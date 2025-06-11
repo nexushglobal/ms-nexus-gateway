@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { USERS_SERVICE } from './config/services';
+import { INTEGRATION_SERVICE, USERS_SERVICE } from './config/services';
 import { envs } from './config/envs';
 import { UsersController } from './users/users.controller';
 
@@ -9,6 +9,13 @@ import { UsersController } from './users/users.controller';
     ClientsModule.register([
       {
         name: USERS_SERVICE,
+        transport: Transport.NATS,
+        options: {
+          servers: [envs.NATS_SERVERS],
+        },
+      },
+      {
+        name: INTEGRATION_SERVICE,
         transport: Transport.NATS,
         options: {
           servers: [envs.NATS_SERVERS],
