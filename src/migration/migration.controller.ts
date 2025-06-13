@@ -3,11 +3,12 @@ import {
   Controller,
   Inject,
   Post,
+  UploadedFile,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { Observable } from 'rxjs';
 import { USERS_SERVICE } from '../config/services';
 
@@ -69,6 +70,46 @@ export class MigrationController {
       }
       throw new BadRequestException(
         `Error procesando archivos: ${error.message}`,
+      );
+    }
+  }
+
+  @Post('users')
+  @UseInterceptors(FileInterceptor('file'))
+  migrateUsersFromFile(
+    @UploadedFile() file: Express.Multer.File,
+  ): Observable<any> {
+    console.log('Archivo de usuarios recibido:', file?.originalname);
+
+    if (!file) {
+      throw new BadRequestException(
+        'Se requiere un archivo JSON con los datos de usuarios',
+      );
+    }
+
+    if (!file.originalname.toLowerCase().endsWith('.json')) {
+      throw new BadRequestException('El archivo debe ser de tipo JSON');
+    }
+
+    try {
+      // Parsear JSON del archivo
+      const users = JSON.parse(file.buffer.toString('utf8'));
+
+      if (!Array.isArray(users)) {
+        throw new BadRequestException(
+          'El archivo JSON debe contener un array de usuarios',
+        );
+      }
+
+      console.log(`Total de usuarios a procesar: ${users.length}`);
+
+      return this.usersClient.send({ cmd: 'user.migrate.users' }, { users });
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        throw new BadRequestException('El archivo JSON tiene formato inválido');
+      }
+      throw new BadRequestException(
+        `Error procesando archivo: ${error.message}`,
       );
     }
   }
