@@ -1,24 +1,9 @@
 import { Body, Controller, Inject, Post } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { Observable } from 'rxjs';
 import { AUTH_SERVICE } from '../config/services';
 
-import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
-
-export class LoginDto {
-  @IsEmail({}, { message: 'El correo debe tener un formato válido' })
-  @IsNotEmpty({ message: 'El correo es requerido' })
-  email: string;
-
-  @IsString()
-  @IsNotEmpty({ message: 'La contraseña es requerida' })
-  @MinLength(6, { message: 'La contraseña debe tener al menos 6 caracteres' })
-  password: string;
-}
-
-export class RefreshTokenDto {
-  refreshToken: string;
-}
+import { LoginDto } from './dto/login.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -34,15 +19,12 @@ export class AuthController {
   }
 
   @Post('refresh')
-  refreshToken(@Body() refreshTokenDto: RefreshTokenDto): Observable<any> {
-    return this.authClient.send(
-      { cmd: 'auth.refreshToken' },
-      { refreshToken: refreshTokenDto.refreshToken },
-    );
+  refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
+    return this.authClient.send({ cmd: 'auth.refreshToken' }, refreshTokenDto);
   }
 
   @Post('verify')
-  verifyToken(@Body() data: { token: string }): Observable<any> {
+  verifyToken(@Body() data: { token: string }) {
     return this.authClient.send({ cmd: 'auth.verifyToken' }, data);
   }
 }
