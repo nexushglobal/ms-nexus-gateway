@@ -4,6 +4,7 @@ import { INTEGRATION_SERVICE, USERS_SERVICE } from './config/services';
 import { envs } from './config/envs';
 import { UsersController } from './users/users.controller';
 import { IntegrationController } from './integration/integration.controller';
+import { MigrationController } from './migration/migration.controller';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { IntegrationController } from './integration/integration.controller';
       },
     ]),
   ],
-  controllers: [UsersController, IntegrationController],
+  controllers: [UsersController, IntegrationController, MigrationController],
   providers: [],
 })
 export class AppModule {}
