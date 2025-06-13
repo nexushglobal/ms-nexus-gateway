@@ -32,7 +32,6 @@ export class MigrationController {
     }
 
     try {
-      // Buscar y parsear cada archivo
       const rolesFile = files.find(
         (f) =>
           f.originalname.includes('roles') || f.originalname.includes('role'),
@@ -53,7 +52,6 @@ export class MigrationController {
         );
       }
 
-      // Parsear JSON de cada archivo
       const roles = JSON.parse(rolesFile.buffer.toString('utf8'));
       const views = JSON.parse(viewsFile.buffer.toString('utf8'));
       const relations = JSON.parse(relationsFile.buffer.toString('utf8'));
@@ -92,7 +90,6 @@ export class MigrationController {
     }
 
     try {
-      // Parsear JSON del archivo
       const users = JSON.parse(file.buffer.toString('utf8'));
 
       if (!Array.isArray(users)) {

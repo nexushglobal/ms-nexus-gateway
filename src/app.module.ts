@@ -1,16 +1,15 @@
-// src/app.module.ts (para el Gateway - actualizado)
 import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { AuthController } from './auth/auth.controller';
+import { envs } from './config/envs';
 import {
   AUTH_SERVICE,
   INTEGRATION_SERVICE,
   USERS_SERVICE,
 } from './config/services';
-import { envs } from './config/envs';
-import { UsersController } from './users/users.controller';
 import { IntegrationController } from './integration/integration.controller';
 import { MigrationController } from './migration/migration.controller';
-import { AuthController } from './auth/auth.controller';
+import { UsersController } from './users/users.controller';
 
 @Module({
   imports: [
