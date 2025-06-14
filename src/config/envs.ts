@@ -9,6 +9,7 @@ interface EnvVars {
 
   RATE_LIMIT_TTL: number;
   RATE_LIMIT_MAX: number;
+  REQUEST_TIMEOUT_MS: number;
 }
 
 const envsSchema = joi
@@ -55,6 +56,12 @@ const envsSchema = joi
         'http://localhost:4321',
         'http://app.hoppscotch',
       ]),
+    REQUEST_TIMEOUT_MS: joi
+      .number()
+      .default(120000)
+      .min(1000)
+      .max(300000)
+      .description('Request timeout in milliseconds (1s - 5min)'),
   })
 
   .unknown(true);

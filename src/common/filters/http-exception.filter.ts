@@ -5,6 +5,7 @@ import {
   HttpException,
   HttpStatus,
   Logger,
+  RequestTimeoutException,
 } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 import { ThrottlerException } from '@nestjs/throttler';
@@ -23,8 +24,18 @@ export class HttpExceptionFilter implements ExceptionFilter {
     let status: number;
     let message: string;
     let errors: ApiError[] | null = null;
+    if (exception instanceof RequestTimeoutException) {
+      status = HttpStatus.REQUEST_TIMEOUT;
+      message =
+        'El servidor tardó demasiado en responder. Por favor, intenta nuevamente.';
 
-    if (exception instanceof ThrottlerException) {
+      errors = [
+        {
+          code: 'REQUEST_TIMEOUT',
+          message: 'La solicitud excedió el tiempo límite de espera',
+        },
+      ];
+    } else if (exception instanceof ThrottlerException) {
       status = HttpStatus.TOO_MANY_REQUESTS;
       message = 'Demasiadas solicitudes. Por favor, intenta más tarde.';
 
