@@ -7,6 +7,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
+import { ThrottlerException } from '@nestjs/throttler';
 import { Response } from 'express';
 import { ApiError, ApiResponse } from '../interfaces/api-response.interface';
 
@@ -23,7 +24,25 @@ export class HttpExceptionFilter implements ExceptionFilter {
     let message: string;
     let errors: ApiError[] | null = null;
 
-    if (exception instanceof HttpException) {
+    if (exception instanceof ThrottlerException) {
+      status = HttpStatus.TOO_MANY_REQUESTS;
+      message = 'Demasiadas solicitudes. Por favor, intenta más tarde.';
+
+      response.header('Retry-After', '60');
+      response.header('X-RateLimit-Limit', '100');
+      response.header('X-RateLimit-Remaining', '0');
+      response.header(
+        'X-RateLimit-Reset',
+        new Date(Date.now() + 60000).toISOString(),
+      );
+
+      errors = [
+        {
+          code: 'RATE_LIMIT_EXCEEDED',
+          message: 'Has excedido el límite de solicitudes permitidas',
+        },
+      ];
+    } else if (exception instanceof HttpException) {
       status = exception.getStatus();
       const exceptionResponse = exception.getResponse();
 
@@ -75,6 +94,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     this.logger.error(
       `${request.method} ${request.url} - ${status} - ${message}`,
+      exception instanceof Error ? exception.stack : JSON.stringify(exception),
     );
 
     const errorResponse: ApiResponse<null> = {
