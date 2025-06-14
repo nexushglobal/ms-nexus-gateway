@@ -5,6 +5,7 @@ interface EnvVars {
   PORT: number;
   NODE_ENV: 'development' | 'production' | 'test';
   NATS_SERVERS: string;
+  ORIGIN: string[];
 
   RATE_LIMIT_TTL: number;
   RATE_LIMIT_MAX: number;
@@ -30,7 +31,32 @@ const envsSchema = joi
       .number()
       .default(100)
       .description('Maximum requests per time window'),
+    ORIGIN: joi
+      .alternatives()
+      .try(
+        joi.array().items(joi.string().uri()),
+        joi.string().custom((value, helpers) => {
+          try {
+            if (typeof value !== 'string') {
+              return helpers.error('any.invalid');
+            }
+            const parsed = JSON.parse(value);
+            if (!Array.isArray(parsed)) {
+              return helpers.error('any.invalid');
+            }
+            return parsed as string[];
+          } catch {
+            return helpers.error('any.invalid');
+          }
+        }),
+      )
+      .default([
+        'http://localhost:3000',
+        'http://localhost:4321',
+        'http://app.hoppscotch',
+      ]),
   })
+
   .unknown(true);
 
 const { error, value } = envsSchema.validate(process.env);
