@@ -94,6 +94,7 @@ export class ProfileController {
         size: photo.size,
       },
     };
+    console.log('File data:', fileData);
 
     return this.userClient.send(
       { cmd: 'user.profile.updatePhoto' },
