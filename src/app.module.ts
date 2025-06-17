@@ -7,6 +7,7 @@ import { AuthController } from './auth/auth.controller';
 import { CustomThrottlerGuard } from './common/guards/custom-throttler.guard';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
+import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor';
 import { envs } from './config/envs';
 import {
   AUTH_SERVICE,
@@ -15,9 +16,9 @@ import {
 } from './config/services';
 import { IntegrationController } from './integration/integration.controller';
 import { MigrationController } from './migration/migration.controller';
-import { UsersController } from './users/users.controller';
-import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor';
 import { ProfileController } from './users/profile.controller';
+import { TreeController } from './users/tree.controller';
+import { UsersController } from './users/users.controller';
 
 @Module({
   imports: [
@@ -69,6 +70,7 @@ import { ProfileController } from './users/profile.controller';
     MigrationController,
     AuthController,
     ProfileController,
+    TreeController,
   ],
   providers: [
     {

@@ -68,7 +68,6 @@ export class ProfileController {
   }
 
   @Put('/photo')
-  @UseGuards(JwtAuthGuard, RolesGuard)
   @UseInterceptors(FileInterceptor('photo'))
   updatePhoto(
     @UserId() userId: string,
