@@ -8,7 +8,6 @@ export const CurrentUser = createParamDecorator(
   ): AuthUser | AuthUser[keyof AuthUser] | undefined => {
     const request = ctx.switchToHttp().getRequest();
     const user: AuthUser = request.user;
-
     return data ? user?.[data] : user;
   },
 );

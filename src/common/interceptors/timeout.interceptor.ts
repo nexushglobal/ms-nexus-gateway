@@ -1,10 +1,10 @@
 import {
-  Injectable,
-  NestInterceptor,
-  ExecutionContext,
   CallHandler,
-  RequestTimeoutException,
+  ExecutionContext,
+  Injectable,
   Logger,
+  NestInterceptor,
+  RequestTimeoutException,
 } from '@nestjs/common';
 import { Observable, throwError, TimeoutError } from 'rxjs';
 import { catchError, timeout } from 'rxjs/operators';
@@ -13,10 +13,11 @@ import { envs } from '../../config/envs';
 @Injectable()
 export class TimeoutInterceptor implements NestInterceptor {
   private readonly logger = new Logger(TimeoutInterceptor.name);
+  private readonly timeoutValue: number;
 
-  constructor(
-    private readonly timeoutValue: number = envs.REQUEST_TIMEOUT_MS || 30000,
-  ) {}
+  constructor() {
+    this.timeoutValue = envs.REQUEST_TIMEOUT_MS || 30000;
+  }
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest();

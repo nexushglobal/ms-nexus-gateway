@@ -17,6 +17,7 @@ import { IntegrationController } from './integration/integration.controller';
 import { MigrationController } from './migration/migration.controller';
 import { UsersController } from './users/users.controller';
 import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor';
+import { ProfileController } from './users/profile.controller';
 
 @Module({
   imports: [
@@ -67,6 +68,7 @@ import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor';
     IntegrationController,
     MigrationController,
     AuthController,
+    ProfileController,
   ],
   providers: [
     {
