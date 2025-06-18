@@ -20,6 +20,7 @@ import { ProfileController } from './users/profile.controller';
 import { TreeController } from './users/tree.controller';
 import { UsersController } from './users/users.controller';
 import { FileTypeFixInterceptor } from './common/interceptors/file-type-fix.interceptor';
+import { PasswordResetController } from './auth/password-reset.controller';
 
 @Module({
   imports: [
@@ -72,6 +73,7 @@ import { FileTypeFixInterceptor } from './common/interceptors/file-type-fix.inte
     AuthController,
     ProfileController,
     TreeController,
+    PasswordResetController,
   ],
   providers: [
     {
