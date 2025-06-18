@@ -12,6 +12,7 @@ import { envs } from './config/envs';
 import {
   AUTH_SERVICE,
   INTEGRATION_SERVICE,
+  PAYMENT_SERVICE,
   USERS_SERVICE,
 } from './config/services';
 import { IntegrationController } from './integration/integration.controller';
@@ -59,6 +60,13 @@ import { PasswordResetController } from './auth/password-reset.controller';
       },
       {
         name: AUTH_SERVICE,
+        transport: Transport.NATS,
+        options: {
+          servers: [envs.NATS_SERVERS],
+        },
+      },
+      {
+        name: PAYMENT_SERVICE,
         transport: Transport.NATS,
         options: {
           servers: [envs.NATS_SERVERS],
