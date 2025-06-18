@@ -77,7 +77,7 @@ export class ProfileController {
           fileType: /(jpg|jpeg|png|webp)$/,
         })
         .addMaxSizeValidator({
-          maxSize: 1024 * 1024 * 5,
+          maxSize: 1024 * 1024 * 5, // 5MB
         })
         .build({
           errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
@@ -86,15 +86,48 @@ export class ProfileController {
     )
     photo: Express.Multer.File,
   ) {
+    // Asegurar que el mimetype sea correcto
+    let correctedMimetype = photo.mimetype;
+
+    // Si el mimetype es incorrecto, intentar corregirlo basado en la extensión
+    if (
+      photo.mimetype === 'text/plain' ||
+      !photo.mimetype.startsWith('image/')
+    ) {
+      const extension = photo.originalname.toLowerCase().split('.').pop();
+      switch (extension) {
+        case 'png':
+          correctedMimetype = 'image/png';
+          break;
+        case 'jpg':
+        case 'jpeg':
+          correctedMimetype = 'image/jpeg';
+          break;
+        case 'webp':
+          correctedMimetype = 'image/webp';
+          break;
+        case 'gif':
+          correctedMimetype = 'image/gif';
+          break;
+        default:
+          correctedMimetype = 'image/png'; // fallback
+      }
+    }
+
     const fileData = {
       file: {
         buffer: photo.buffer,
         originalname: photo.originalname,
-        mimetype: photo.mimetype,
+        mimetype: correctedMimetype, // Usar el mimetype corregido
         size: photo.size,
       },
     };
-    console.log('File data:', fileData);
+
+    console.log('File data corrected:', {
+      originalname: fileData.file.originalname,
+      mimetype: fileData.file.mimetype,
+      size: fileData.file.size,
+    });
 
     return this.userClient.send(
       { cmd: 'user.profile.updatePhoto' },

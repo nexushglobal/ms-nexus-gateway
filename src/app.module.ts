@@ -19,6 +19,7 @@ import { MigrationController } from './migration/migration.controller';
 import { ProfileController } from './users/profile.controller';
 import { TreeController } from './users/tree.controller';
 import { UsersController } from './users/users.controller';
+import { FileTypeFixInterceptor } from './common/interceptors/file-type-fix.interceptor';
 
 @Module({
   imports: [
@@ -88,6 +89,10 @@ import { UsersController } from './users/users.controller';
     {
       provide: APP_INTERCEPTOR,
       useClass: TimeoutInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: FileTypeFixInterceptor,
     },
   ],
 })
