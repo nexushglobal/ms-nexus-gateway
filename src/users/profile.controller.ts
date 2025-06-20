@@ -20,8 +20,9 @@ import { ChangePasswordDto } from './dto/change-password.dto';
 import { UpdateBankInfoDto } from './dto/update-back-info.dto';
 import { UpdateBillingInfoDto } from './dto/update-billing-info.dto';
 import { UpdateContactInfoDto } from './dto/update-conteact-info.dto';
+import { UpdatePersonalInfoDto } from './dto/update-profile-info.dto';
 
-@Controller('user/profile')
+@Controller('user/profile/')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class ProfileController {
   constructor(
@@ -34,7 +35,16 @@ export class ProfileController {
       { userId },
     );
   }
-
+  @Put('/personal-info')
+  updatePersonalInfo(
+    @UserId() userId: string,
+    @Body() updatePersonalInfoDto: UpdatePersonalInfoDto,
+  ) {
+    return this.userClient.send(
+      { cmd: 'user.profile.updatePersonalInfo' },
+      { userId, updatePersonalInfoDto },
+    );
+  }
   @Put('/contact-info')
   updateContactInfo(
     @UserId() userId: string,

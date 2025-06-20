@@ -11,7 +11,8 @@ import { ClientProxy } from '@nestjs/microservices';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { Observable } from 'rxjs';
 import { USERS_SERVICE } from '../config/services';
-
+import { Public } from 'src/common/decorators/public.decorator';
+@Public()
 @Controller('migration')
 export class MigrationController {
   constructor(
@@ -24,7 +25,6 @@ export class MigrationController {
   migrateFromFiles(
     @UploadedFiles() files: Express.Multer.File[],
   ): Observable<any> {
-    console.log('Archivos recibidos:', files);
     if (!files || files.length !== 3) {
       throw new BadRequestException(
         'Se requieren exactamente 3 archivos: roles.json, views.json, relations.json',
@@ -97,8 +97,6 @@ export class MigrationController {
           'El archivo JSON debe contener un array de usuarios',
         );
       }
-
-      console.log(`Total de usuarios a procesar: ${users.length}`);
 
       return this.usersClient.send({ cmd: 'user.migrate.users' }, { users });
     } catch (error) {

@@ -22,6 +22,7 @@ import { TreeController } from './users/tree.controller';
 import { UsersController } from './users/users.controller';
 import { FileTypeFixInterceptor } from './common/interceptors/file-type-fix.interceptor';
 import { PasswordResetController } from './auth/password-reset.controller';
+import { MenuController } from './users/menu.controller';
 
 @Module({
   imports: [
@@ -75,6 +76,7 @@ import { PasswordResetController } from './auth/password-reset.controller';
     ]),
   ],
   controllers: [
+    MenuController,
     UsersController,
     IntegrationController,
     MigrationController,
