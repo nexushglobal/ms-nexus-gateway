@@ -21,6 +21,11 @@ enum Position {
   RIGHT = 'RIGHT',
 }
 
+enum DocumentType {
+  DNI = 'DNI',
+  CE = 'CE',
+  PAS = 'PAS',
+}
 export class RegisterDto {
   @IsEmail({}, { message: 'El correo debe tener un formato válido' })
   @IsNotEmpty({ message: 'El correo es requerido' })
@@ -87,7 +92,9 @@ export class RegisterDto {
   @IsNotEmpty({ message: 'El rol es requerido' })
   roleCode: string;
 
-  @IsString()
+  @IsEnum(DocumentType, {
+    message: 'El tipo de documento debe ser DNI, CE o PAS',
+  })
   @IsNotEmpty({ message: 'El tipo de documento es requerido' })
   @Transform(({ value }: { value: string }) => value?.trim())
   documentType: string;

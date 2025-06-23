@@ -1,31 +1,48 @@
-import {
-  Controller,
-  Get,
-  Inject,
-  Param,
-  Query,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Inject, Query, UseGuards } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
+import { UserId } from 'src/common/decorators/current-user.decorator';
 import { USERS_SERVICE } from '../config/services';
-import { TreeQueryDto } from './dto/tree-query.dto';
+import { TreeQueryDto, TreeSearchDto } from './dto/tree-query.dto';
 
-@Controller('users')
+@Controller('users/tree')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class TreeController {
   constructor(
     @Inject(USERS_SERVICE) private readonly userClient: ClientProxy,
   ) {}
 
-  @Get(':id/tree')
-  getUserTree(@Param('id') userId: string, @Query() query: TreeQueryDto) {
-    const { depth = 3 } = query;
+  @Get()
+  getUserTree(@UserId() currentUserId: string, @Query() query: TreeQueryDto) {
+    const { userId, depth = 3 } = query;
 
     return this.userClient.send(
       { cmd: 'user.tree.getUserTree' },
-      { userId, depth },
+      {
+        userId,
+        depth,
+        currentUserId,
+      },
+    );
+  }
+
+  @Get('search')
+  searchUsersInTree(
+    @UserId() currentUserId: string,
+    @Query() query: TreeSearchDto,
+  ) {
+    const { search, page = 1, limit = 20 } = query;
+    console.log('Search query:', search);
+
+    return this.userClient.send(
+      { cmd: 'user.tree.searchUsers' },
+      {
+        search,
+        page,
+        limit,
+        currentUserId,
+      },
     );
   }
 }

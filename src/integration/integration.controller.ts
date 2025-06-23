@@ -10,6 +10,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ClientProxy } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
 import { INTEGRATION_SERVICE } from '../config/services';
+import { DocumentDto } from './dto/validate-document.dto';
 
 @Controller('integration')
 export class IntegrationController {
@@ -49,7 +50,7 @@ export class IntegrationController {
   }
 
   @Post('document/validate')
-  validateDocument(@Body() documentData: any): Observable<any> {
+  validateDocument(@Body() documentData: DocumentDto) {
     return this.integrationClient.send(
       { cmd: 'integration.document.validateDocument' },
       documentData,
