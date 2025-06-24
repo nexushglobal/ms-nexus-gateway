@@ -4,27 +4,25 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ThrottlerModule } from '@nestjs/throttler';
 
 import { AuthController } from './auth/auth.controller';
+import { PasswordResetController } from './auth/password-reset.controller';
 import { CustomThrottlerGuard } from './common/guards/custom-throttler.guard';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
+import { FileTypeFixInterceptor } from './common/interceptors/file-type-fix.interceptor';
 import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor';
 import { envs } from './config/envs';
 import {
   AUTH_SERVICE,
   INTEGRATION_SERVICE,
-  MEMBERSHIP_SERVICE,
-  PAYMENT_SERVICE,
   POINT_SERVICE,
   USERS_SERVICE,
 } from './config/services';
 import { IntegrationController } from './integration/integration.controller';
-import { MigrationController } from './migration/migration.controller';
+import { MigrationModule } from './migration/migration.module';
+import { MenuController } from './users/menu.controller';
 import { ProfileController } from './users/profile.controller';
 import { TreeController } from './users/tree.controller';
 import { UsersController } from './users/users.controller';
-import { FileTypeFixInterceptor } from './common/interceptors/file-type-fix.interceptor';
-import { PasswordResetController } from './auth/password-reset.controller';
-import { MenuController } from './users/menu.controller';
 
 @Module({
   imports: [
@@ -69,20 +67,6 @@ import { MenuController } from './users/menu.controller';
         },
       },
       {
-        name: PAYMENT_SERVICE,
-        transport: Transport.NATS,
-        options: {
-          servers: [envs.NATS_SERVERS],
-        },
-      },
-      {
-        name: MEMBERSHIP_SERVICE,
-        transport: Transport.NATS,
-        options: {
-          servers: [envs.NATS_SERVERS],
-        },
-      },
-      {
         name: POINT_SERVICE,
         transport: Transport.NATS,
         options: {
@@ -90,12 +74,13 @@ import { MenuController } from './users/menu.controller';
         },
       },
     ]),
+
+    MigrationModule,
   ],
   controllers: [
     MenuController,
     UsersController,
     IntegrationController,
-    MigrationController,
     AuthController,
     ProfileController,
     TreeController,
