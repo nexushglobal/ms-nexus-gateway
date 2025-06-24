@@ -1,3 +1,5 @@
+// src/migration/migration.controller.ts (Gateway - Actualizar el existente)
+
 import {
   BadRequestException,
   Controller,
@@ -10,14 +12,17 @@ import {
 import { ClientProxy } from '@nestjs/microservices';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { Observable } from 'rxjs';
-import { USERS_SERVICE } from '../config/services';
+import { USERS_SERVICE, PAYMENT_SERVICE } from '../config/services';
 import { Public } from 'src/common/decorators/public.decorator';
+
 @Public()
 @Controller('migration')
 export class MigrationController {
   constructor(
     @Inject(USERS_SERVICE)
     private readonly usersClient: ClientProxy,
+    @Inject(PAYMENT_SERVICE)
+    private readonly paymentClient: ClientProxy,
   ) {}
 
   @Post('files-views-roles')
@@ -99,6 +104,49 @@ export class MigrationController {
       }
 
       return this.usersClient.send({ cmd: 'user.migrate.users' }, { users });
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        throw new BadRequestException('El archivo JSON tiene formato inválido');
+      }
+      throw new BadRequestException(
+        `Error procesando archivo: ${error.message}`,
+      );
+    }
+  }
+
+  @Post('payment-configs')
+  @UseInterceptors(FileInterceptor('file'))
+  migratePaymentConfigsFromFile(
+    @UploadedFile() file: Express.Multer.File,
+  ): Observable<any> {
+    console.log(
+      'Archivo de configuraciones de pago recibido:',
+      file?.originalname,
+    );
+
+    if (!file) {
+      throw new BadRequestException(
+        'Se requiere un archivo JSON con los datos de configuraciones de pago',
+      );
+    }
+
+    if (!file.originalname.toLowerCase().endsWith('.json')) {
+      throw new BadRequestException('El archivo debe ser de tipo JSON');
+    }
+
+    try {
+      const paymentConfigs = JSON.parse(file.buffer.toString('utf8'));
+
+      if (!Array.isArray(paymentConfigs)) {
+        throw new BadRequestException(
+          'El archivo JSON debe contener un array de configuraciones de pago',
+        );
+      }
+
+      return this.paymentClient.send(
+        { cmd: 'payment.migrate.paymentConfigs' },
+        { paymentConfigs },
+      );
     } catch (error) {
       if (error instanceof SyntaxError) {
         throw new BadRequestException('El archivo JSON tiene formato inválido');
