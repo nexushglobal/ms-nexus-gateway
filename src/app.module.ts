@@ -12,7 +12,9 @@ import { envs } from './config/envs';
 import {
   AUTH_SERVICE,
   INTEGRATION_SERVICE,
+  MEMBERSHIP_SERVICE,
   PAYMENT_SERVICE,
+  POINT_SERVICE,
   USERS_SERVICE,
 } from './config/services';
 import { IntegrationController } from './integration/integration.controller';
@@ -68,6 +70,20 @@ import { MenuController } from './users/menu.controller';
       },
       {
         name: PAYMENT_SERVICE,
+        transport: Transport.NATS,
+        options: {
+          servers: [envs.NATS_SERVERS],
+        },
+      },
+      {
+        name: MEMBERSHIP_SERVICE,
+        transport: Transport.NATS,
+        options: {
+          servers: [envs.NATS_SERVERS],
+        },
+      },
+      {
+        name: POINT_SERVICE,
         transport: Transport.NATS,
         options: {
           servers: [envs.NATS_SERVERS],
