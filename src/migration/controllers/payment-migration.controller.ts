@@ -34,4 +34,18 @@ export class PaymentMigrationController {
       'paymentConfigs',
     );
   }
+
+  @Post('payments')
+  @UseInterceptors(FileInterceptor('file'))
+  migratePaymentsFromFile(
+    @UploadedFile() file: Express.Multer.File,
+  ): Observable<any> {
+    return this.migrationService.migrateSingleFileArray(
+      this.paymentClient,
+      file,
+      'pagos',
+      'payment.migrate.payments',
+      'payments',
+    );
+  }
 }
