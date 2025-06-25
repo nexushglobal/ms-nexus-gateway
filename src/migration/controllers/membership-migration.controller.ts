@@ -8,8 +8,8 @@ import {
 import { ClientProxy } from '@nestjs/microservices';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Observable } from 'rxjs';
-import { MEMBERSHIP_SERVICE } from '../../config/services';
 import { Public } from '../../common/decorators/public.decorator';
+import { MEMBERSHIP_SERVICE } from '../../config/services';
 import { MigrationBaseService } from '../services/migration-base.service';
 
 @Public()
@@ -32,6 +32,20 @@ export class MembershipMigrationController {
       'planes de membresía',
       'membership.migrate.membershipPlans',
       'membershipPlans',
+    );
+  }
+
+  @Post('memberships-user')
+  @UseInterceptors(FileInterceptor('file'))
+  migrateMembershipsFromFile(
+    @UploadedFile() file: Express.Multer.File,
+  ): Observable<any> {
+    return this.migrationService.migrateSingleFileArray(
+      this.membershipClient,
+      file,
+      'membresías',
+      'membership.migrate.memberships',
+      'memberships',
     );
   }
 }
