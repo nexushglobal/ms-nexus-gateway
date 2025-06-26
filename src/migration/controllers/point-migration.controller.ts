@@ -1,5 +1,3 @@
-// src/migration/controllers/point-migration.controller.ts - Para el gateway
-
 import {
   Controller,
   Inject,
