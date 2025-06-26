@@ -4,12 +4,14 @@ import { envs } from '../config/envs';
 import {
   MEMBERSHIP_SERVICE,
   PAYMENT_SERVICE,
+  POINT_SERVICE,
   USERS_SERVICE,
 } from '../config/services';
 import { MembershipMigrationController } from './controllers/membership-migration.controller';
 import { PaymentMigrationController } from './controllers/payment-migration.controller';
 import { UserMigrationController } from './controllers/user-migration.controller';
 import { MigrationBaseService } from './services/migration-base.service';
+import { PointMigrationController } from './controllers/point-migration.controller';
 
 @Module({
   imports: [
@@ -35,12 +37,20 @@ import { MigrationBaseService } from './services/migration-base.service';
           servers: [envs.NATS_SERVERS],
         },
       },
+      {
+        name: POINT_SERVICE,
+        transport: Transport.NATS,
+        options: {
+          servers: [envs.NATS_SERVERS],
+        },
+      },
     ]),
   ],
   controllers: [
     UserMigrationController,
     PaymentMigrationController,
     MembershipMigrationController,
+    PointMigrationController,
   ],
   providers: [MigrationBaseService],
   exports: [MigrationBaseService],
