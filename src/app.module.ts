@@ -14,6 +14,7 @@ import { envs } from './config/envs';
 import {
   AUTH_SERVICE,
   INTEGRATION_SERVICE,
+  PAYMENT_SERVICE,
   POINT_SERVICE,
   USERS_SERVICE,
 } from './config/services';
@@ -23,6 +24,7 @@ import { MenuController } from './users/menu.controller';
 import { ProfileController } from './users/profile.controller';
 import { TreeController } from './users/tree.controller';
 import { UsersController } from './users/users.controller';
+import { PaymentsModule } from './payments/payments.module';
 
 @Module({
   imports: [
@@ -73,9 +75,18 @@ import { UsersController } from './users/users.controller';
           servers: [envs.NATS_SERVERS],
         },
       },
+      {
+        name: PAYMENT_SERVICE,
+        transport: Transport.NATS,
+        options: {
+          servers: [envs.NATS_SERVERS],
+        },
+      },
     ]),
 
     MigrationModule,
+
+    PaymentsModule,
   ],
   controllers: [
     MenuController,
