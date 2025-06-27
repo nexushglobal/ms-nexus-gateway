@@ -1,4 +1,11 @@
-import { Controller, Get, Inject, Query, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Inject,
+  Param,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { UserId } from 'src/common/decorators/current-user.decorator';
@@ -6,6 +13,7 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { PaginationHelper } from 'src/common/helpers/pagination.helper';
 import { PAYMENT_SERVICE } from 'src/config/services';
+import { PaymentDetailDto } from '../dto/payment-detail.dto';
 import { PaymentFiltersDto } from '../dto/payment-filter.dto';
 
 @Controller('user/payments')
@@ -63,5 +71,19 @@ export class UserPaymentsController {
         activePaymentConfigs: activePaymentConfigs || [],
       },
     };
+  }
+
+  @Get(':id')
+  getPaymentDetail(
+    @UserId() userId: string,
+    @Param() params: PaymentDetailDto,
+  ) {
+    return this.paymentClient.send(
+      { cmd: 'payment.getPaymentDetail' },
+      {
+        paymentId: params.id,
+        userId,
+      },
+    );
   }
 }
