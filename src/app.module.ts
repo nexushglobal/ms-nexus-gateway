@@ -25,6 +25,7 @@ import { ProfileController } from './users/profile.controller';
 import { TreeController } from './users/tree.controller';
 import { UsersController } from './users/users.controller';
 import { PaymentsModule } from './payments/payments.module';
+import { MembershipModule } from './membership/membership.module';
 
 @Module({
   imports: [
@@ -87,6 +88,8 @@ import { PaymentsModule } from './payments/payments.module';
     MigrationModule,
 
     PaymentsModule,
+
+    MembershipModule,
   ],
   controllers: [
     MenuController,
