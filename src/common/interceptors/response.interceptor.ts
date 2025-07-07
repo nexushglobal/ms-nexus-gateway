@@ -1,85 +1,134 @@
 import {
-  CallHandler,
-  ExecutionContext,
   Injectable,
   NestInterceptor,
+  ExecutionContext,
+  CallHandler,
+  Logger,
 } from '@nestjs/common';
-import { Observable, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
-import { ApiResponse } from '../interfaces/api-response.interface';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { Request, Response } from 'express';
+import { createBaseLogInfo } from '../helpers/create-base-log-info.helper';
+
+interface ApiResponse<T = any> {
+  success: boolean;
+  data: T | null;
+  message: string | string[];
+  errors: string | string[] | null;
+}
 
 @Injectable()
 export class ResponseInterceptor<T>
   implements NestInterceptor<T, ApiResponse<T>>
 {
+  private readonly logger = new Logger(ResponseInterceptor.name);
+
   intercept(
     context: ExecutionContext,
     next: CallHandler,
   ): Observable<ApiResponse<T>> {
+    const ctx = context.switchToHttp();
+    const request = ctx.getRequest<Request>();
+    const response = ctx.getResponse<Response>();
+
     return next.handle().pipe(
       map((data) => {
-        if (data && typeof data === 'object' && 'success' in data) {
-          return data as ApiResponse<T>;
-        }
+        const statusCode = response.statusCode;
+        const message = this.getSuccessMessage(context, statusCode);
+        // Log de respuesta exitosa
+        this.logSuccessResponse(request, statusCode, message, data);
 
         return {
           success: true,
           data: data,
-          message: this.getSuccessMessage(context),
+          message: message,
           errors: null,
         };
-      }),
-      catchError((error: unknown) => {
-        return throwError(() => error);
       }),
     );
   }
 
-  private getSuccessMessage(context: ExecutionContext): string {
-    const request = context.switchToHttp().getRequest();
-    const method = request.method;
-    const url = request.url;
+  private getSuccessMessage(
+    context: ExecutionContext,
+    statusCode: number,
+  ): string {
+    const method = context.switchToHttp().getRequest<Request>().method;
+    const route = context.switchToHttp().getRequest<Request>().route?.path;
 
-    if (url.includes('/auth/login')) {
-      return 'Inicio de sesión exitoso';
-    }
-    if (url.includes('/auth/refresh')) {
-      return 'Token renovado exitosamente';
-    }
-    if (url.includes('/auth/verify')) {
-      return 'Token verificado exitosamente';
-    }
-    if (url.includes('/users/register')) {
-      return 'Usuario registrado exitosamente';
-    }
-    if (url.includes('/users') && method === 'GET') {
-      return 'Usuarios obtenidos exitosamente';
-    }
-    if (url.includes('/integration/email')) {
-      return 'Email enviado exitosamente';
-    }
-    if (url.includes('/integration/files/upload')) {
-      return 'Archivo subido exitosamente';
-    }
-    if (url.includes('/integration/document/validate')) {
-      return 'Documento validado exitosamente';
-    }
-    if (url.includes('/migration')) {
-      return 'Migración completada exitosamente';
-    }
-
+    // Mensajes personalizados por método HTTP
     switch (method) {
       case 'GET':
-        return 'Datos obtenidos exitosamente';
+        return this.getGetMessage(route, statusCode);
       case 'POST':
-        return 'Recurso creado exitosamente';
+        return this.getPostMessage(route, statusCode);
       case 'PUT':
       case 'PATCH':
-        return 'Recurso actualizado exitosamente';
+        return this.getPutMessage(route, statusCode);
       case 'DELETE':
-        return 'Recurso eliminado exitosamente';
+        return this.getDeleteMessage(route, statusCode);
       default:
         return 'Operación completada exitosamente';
     }
+  }
+
+  private getGetMessage(route: string, statusCode: number): string {
+    if (statusCode === 200) {
+      if (route?.includes('/:id')) {
+        return 'Registro obtenido exitosamente';
+      }
+      return 'Datos obtenidos exitosamente';
+    }
+    return 'Consulta realizada exitosamente';
+  }
+
+  private getPostMessage(route: string, statusCode: number): string {
+    if (statusCode === 201) {
+      return 'Recurso creado exitosamente';
+    }
+    if (statusCode === 200) {
+      return 'Operación realizada exitosamente';
+    }
+    return 'Proceso completado exitosamente';
+  }
+
+  private getPutMessage(route: string, statusCode: number): string {
+    if (statusCode === 200) {
+      return 'Registro actualizado exitosamente';
+    }
+    if (statusCode === 204) {
+      return 'Actualización completada';
+    }
+    return 'Modificación realizada exitosamente';
+  }
+
+  private getDeleteMessage(route: string, statusCode: number): string {
+    if (statusCode === 200) {
+      return 'Registro eliminado exitosamente';
+    }
+    if (statusCode === 204) {
+      return 'Eliminación completada';
+    }
+    return 'Recurso eliminado exitosamente';
+  }
+
+  private logSuccessResponse(
+    request: Request,
+    statusCode: number,
+    message: string,
+    data: any,
+  ) {
+    const baseInfo = createBaseLogInfo(request);
+    this.logger.log({
+      ...baseInfo,
+      level: 'SUCCESS',
+      type: 'HTTP_SUCCESS',
+      response: {
+        statusCode,
+        message,
+        hasData: data !== null && data !== undefined,
+        dataType: Array.isArray(data) ? 'array' : typeof data,
+        dataLength: Array.isArray(data) ? data.length : undefined,
+      },
+    });
   }
 }
