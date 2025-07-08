@@ -1,11 +1,10 @@
 import { Transform } from 'class-transformer';
-import { IsBoolean, IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
+import { IsBoolean, IsOptional } from 'class-validator';
 
 export class FindMembershipPlansDto {
-
   @IsOptional()
   @IsBoolean()
-  @Transform(({ value }) => {
+  @Transform(({ value }: { value: string }) => {
     if (value === 'true') return true;
     if (value === 'false') return false;
     return value;

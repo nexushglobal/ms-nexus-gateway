@@ -9,6 +9,7 @@ import { RolesGuard } from 'src/common/guards/roles.guard';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { TimeoutInterceptor } from 'src/common/interceptors/timeout.interceptor';
 import { FileTypeFixInterceptor } from 'src/common/interceptors/file-type-fix.interceptor';
+import { AdminPaymentsController } from './controllers/admin-payments.controller';
 
 @Module({
   imports: [
@@ -29,7 +30,7 @@ import { FileTypeFixInterceptor } from 'src/common/interceptors/file-type-fix.in
       },
     ]),
   ],
-  controllers: [UserPaymentsController],
+  controllers: [UserPaymentsController, AdminPaymentsController],
   providers: [
     {
       provide: APP_GUARD,

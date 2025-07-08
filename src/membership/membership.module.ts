@@ -13,45 +13,45 @@ import { FileTypeFixInterceptor } from 'src/common/interceptors/file-type-fix.in
 
 @Module({
   imports: [
-      ClientsModule.register([
-        {
-          name: MEMBERSHIP_SERVICE,
-          transport: Transport.NATS,
-          options: {
-            servers: [envs.NATS_SERVERS],
-          },
+    ClientsModule.register([
+      {
+        name: MEMBERSHIP_SERVICE,
+        transport: Transport.NATS,
+        options: {
+          servers: [envs.NATS_SERVERS],
         },
-        {
-          name: AUTH_SERVICE,
-          transport: Transport.NATS,
-          options: {
-            servers: [envs.NATS_SERVERS],
-          },
+      },
+      {
+        name: AUTH_SERVICE,
+        transport: Transport.NATS,
+        options: {
+          servers: [envs.NATS_SERVERS],
         },
-      ]),
-    ],
+      },
+    ]),
+  ],
   controllers: [MembershipController, MembershipPlanController],
   providers: [
-      {
-        provide: APP_GUARD,
-        useClass: CustomThrottlerGuard,
-      },
-      {
-        provide: APP_GUARD,
-        useClass: JwtAuthGuard,
-      },
-      {
-        provide: APP_GUARD,
-        useClass: RolesGuard,
-      },
-      {
-        provide: APP_INTERCEPTOR,
-        useClass: TimeoutInterceptor,
-      },
-      {
-        provide: APP_INTERCEPTOR,
-        useClass: FileTypeFixInterceptor,
-      },
-    ],
+    {
+      provide: APP_GUARD,
+      useClass: CustomThrottlerGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TimeoutInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: FileTypeFixInterceptor,
+    },
+  ],
 })
 export class MembershipModule {}
