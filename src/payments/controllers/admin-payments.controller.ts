@@ -5,15 +5,17 @@ import {
   UseGuards,
   Logger,
   Param,
+  Inject,
 } from '@nestjs/common';
-import { Inject } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
-import { GetAdminPaymentsQueryDto } from '../dto/admin-payments.dto';
-import { GetAdminPaymentDetailParamsDto } from '../dto/admin-payments-detail.dto';
+import { PaginationHelper } from 'src/common/helpers/pagination.helper';
+import { PAYMENT_SERVICE } from 'src/config/services';
+import { PaymentFiltersDto } from '../dto/payment-filter.dto';
+import { PaymentDetailDto } from '../dto/payment-detail.dto';
 
 @Controller('admin/payments')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -21,19 +23,51 @@ export class AdminPaymentsController {
   private readonly logger = new Logger(AdminPaymentsController.name);
 
   constructor(
-    @Inject('PAYMENT_SERVICE') private readonly paymentClient: ClientProxy,
+    @Inject(PAYMENT_SERVICE) private readonly paymentClient: ClientProxy,
   ) {}
 
   @Get()
   @Roles('FAC')
-  async getAllPayments(@Query() query: GetAdminPaymentsQueryDto) {
+  async getAllPayments(@Query() filtersDto: PaymentFiltersDto) {
     try {
       this.logger.log(
-        `🔍 Solicitud de lista de pagos administrativos - Página: ${query.page}`,
+        `🔍 Solicitud de lista de pagos administrativos - Página: ${filtersDto.page}`,
       );
 
+      const { page, limit, offset, filters } =
+        PaginationHelper.validatePaginationParams(
+          filtersDto.page,
+          filtersDto.limit,
+          {
+            search: filtersDto.search,
+            sortBy: filtersDto.sortBy,
+            sortOrder: filtersDto.sortOrder,
+            startDate: filtersDto.startDate,
+            endDate: filtersDto.endDate,
+            status: filtersDto.status,
+            paymentConfigId: filtersDto.paymentConfigId,
+          },
+        );
+
       const result = await firstValueFrom(
-        this.paymentClient.send({ cmd: 'payment.admin.getAllPayments' }, query),
+        this.paymentClient.send(
+          { cmd: 'payment.admin.getAllPayments' },
+          {
+            limit,
+            offset,
+            filters,
+          },
+        ),
+      );
+
+      const activePaymentConfigs = await firstValueFrom(
+        this.paymentClient.send({ cmd: 'payment.getActivePaymentConfigs' }, {}),
+      );
+
+      const paginatedData = PaginationHelper.createPaginatedResponse(
+        result.payments,
+        { page, limit, total: result.total },
+        filters,
       );
 
       this.logger.log(
@@ -41,75 +75,30 @@ export class AdminPaymentsController {
       );
 
       return {
-        success: true,
-        data: result.payments || [],
-        pagination: result.pagination || {
-          page: query.page || 1,
-          limit: query.limit || 20,
-          total: 0,
-          totalPages: 0,
+        ...paginatedData,
+        meta: {
+          activePaymentConfigs: activePaymentConfigs || [],
         },
-        message: 'Lista de pagos obtenida exitosamente',
       };
     } catch (error) {
       this.logger.error('❌ Error obteniendo lista de pagos:', error);
-
       throw error;
     }
   }
+
   @Get(':id')
   @Roles('FAC')
-  async getPaymentDetail(@Param() params: GetAdminPaymentDetailParamsDto) {
+  getPaymentDetail(@Param() params: PaymentDetailDto) {
     try {
-      this.logger.log(
-        `🔍 Solicitud de detalle administrativo del pago: ${params.id}`,
+      return this.paymentClient.send(
+        { cmd: 'payment.admin.getPaymentDetail' },
+        { paymentId: params.id },
       );
-
-      const result = await firstValueFrom(
-        this.paymentClient.send(
-          { cmd: 'payment.admin.getPaymentDetail' },
-          { paymentId: params.id },
-        ),
-      );
-
-      this.logger.log(
-        `✅ Detalle administrativo del pago ${params.id} obtenido exitosamente`,
-      );
-
-      return {
-        success: true,
-        data: result,
-        message: 'Detalle del pago obtenido exitosamente',
-      };
     } catch (error) {
       this.logger.error(
         `❌ Error obteniendo detalle del pago ${params.id}:`,
         error,
       );
-
-      throw error;
-    }
-  }
-  @Get('metadata')
-  @Roles('FAC')
-  async getPaymentMetadata() {
-    try {
-      this.logger.log('📋 Solicitud de metadatos de pagos');
-
-      const result = await firstValueFrom(
-        this.paymentClient.send({ cmd: 'payment.admin.getMetadata' }, {}),
-      );
-
-      this.logger.log('✅ Metadatos de pagos obtenidos exitosamente');
-
-      return {
-        success: true,
-        data: result,
-        message: 'Metadatos obtenidos exitosamente',
-      };
-    } catch (error) {
-      this.logger.error('❌ Error obteniendo metadatos de pagos:', error);
-
       throw error;
     }
   }
