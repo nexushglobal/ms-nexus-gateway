@@ -10,6 +10,7 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { TimeoutInterceptor } from 'src/common/interceptors/timeout.interceptor';
 import { FileTypeFixInterceptor } from 'src/common/interceptors/file-type-fix.interceptor';
+import { MembershipReconsumptionController } from './controllers/membership-reconsumption.controller';
 
 @Module({
   imports: [
@@ -30,7 +31,11 @@ import { FileTypeFixInterceptor } from 'src/common/interceptors/file-type-fix.in
       },
     ]),
   ],
-  controllers: [MembershipController, MembershipPlanController],
+  controllers: [
+    MembershipController,
+    MembershipPlanController,
+    MembershipReconsumptionController,
+  ],
   providers: [
     {
       provide: APP_GUARD,

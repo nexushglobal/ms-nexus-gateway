@@ -23,7 +23,7 @@ export class RpcCustomExceptionFilter implements ExceptionFilter {
     let status = 500;
     let message: string | string[] = 'Error interno del servidor';
     let errors: string[] | null = null;
-    let serviceInfo = 'vdi-client-gateway';
+    let serviceInfo = 'ms-nexus-gateway';
     let errorType = 'UNKNOWN';
 
     if (exception instanceof RpcException) {
