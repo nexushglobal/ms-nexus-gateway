@@ -50,6 +50,8 @@ export class MembershipController {
     )
     files: Array<Express.Multer.File>,
   ) {
+    console.log('Creating membership subscription for user:', files);
+
     return this.membershipClient.send(
       { cmd: 'membership.createSubscription' },
       {
@@ -58,6 +60,8 @@ export class MembershipController {
         files: files.map((file) => ({
           originalname: file.originalname,
           buffer: file.buffer,
+          mimetype: file.mimetype,
+          size: file.size,
         })),
       },
     );
