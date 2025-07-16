@@ -10,6 +10,7 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { TimeoutInterceptor } from 'src/common/interceptors/timeout.interceptor';
 import { FileTypeFixInterceptor } from 'src/common/interceptors/file-type-fix.interceptor';
 import { AdminPaymentsController } from './controllers/admin-payments.controller';
+import { AdminPaymentApprovalController } from './controllers/admin-paymemts-approval.controller';
 
 @Module({
   imports: [
@@ -30,7 +31,11 @@ import { AdminPaymentsController } from './controllers/admin-payments.controller
       },
     ]),
   ],
-  controllers: [UserPaymentsController, AdminPaymentsController],
+  controllers: [
+    UserPaymentsController,
+    AdminPaymentsController,
+    AdminPaymentApprovalController,
+  ],
   providers: [
     {
       provide: APP_GUARD,
