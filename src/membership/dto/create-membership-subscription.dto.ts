@@ -47,7 +47,7 @@ export class CreateMembershipSubscriptionDto {
   paymentMethod: string;
 
   @IsNumber()
-  @Type(() => Number)
+  @Transform(({ value }: { value: string }) => parseInt(value, 10))
   @IsNotEmpty({ message: 'El ID del plan es requerido' })
   planId: number;
 
