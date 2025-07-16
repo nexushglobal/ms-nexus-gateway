@@ -16,6 +16,7 @@ import {
   INTEGRATION_SERVICE,
   PAYMENT_SERVICE,
   POINT_SERVICE,
+  UNILEVEL_SERVICE,
   USERS_SERVICE,
 } from './config/services';
 import { IntegrationController } from './integration/integration.controller';
@@ -78,6 +79,13 @@ import { MembershipModule } from './membership/membership.module';
       },
       {
         name: PAYMENT_SERVICE,
+        transport: Transport.NATS,
+        options: {
+          servers: [envs.NATS_SERVERS],
+        },
+      },
+      {
+        name: UNILEVEL_SERVICE,
         transport: Transport.NATS,
         options: {
           servers: [envs.NATS_SERVERS],
