@@ -27,6 +27,7 @@ import { TreeController } from './users/tree.controller';
 import { UsersController } from './users/users.controller';
 import { PaymentsModule } from './payments/payments.module';
 import { MembershipModule } from './membership/membership.module';
+import { UnilevelModule } from './unilevel/unilevel.module';
 
 @Module({
   imports: [
@@ -98,6 +99,8 @@ import { MembershipModule } from './membership/membership.module';
     PaymentsModule,
 
     MembershipModule,
+
+    UnilevelModule,
   ],
   controllers: [
     MenuController,
