@@ -20,6 +20,7 @@ import { CreateUpdateLeadDto } from './dto/create-update-lead.dto';
 import { CreateClientAndGuarantorDto } from './dto/create-client-and-guarantor.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { CreateSaleDto } from './dto/create-sale.dto';
+import { UserId } from 'src/common/decorators/current-user.decorator';
 
 @Controller('unilevel/external')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -97,18 +98,21 @@ export class UnilevelController {
 
   // ============= VENTAS =============
   @Post('sales')
-  createSale(@Body() createSaleDto: CreateSaleDto) {
+  createSale(@Body() createSaleDto: CreateSaleDto, @UserId() userId: string) {
     return this.unilevelClient.send(
       { cmd: 'unilevel.createSale' },
-      createSaleDto,
+      { userId, ...createSaleDto },
     );
   }
 
   @Get('sales')
-  findAllSales(@Query() paginationDto: PaginationDto) {
+  findAllSales(
+    @Query() paginationDto: PaginationDto,
+    @UserId() userId: string,
+  ) {
     return this.unilevelClient.send(
       { cmd: 'unilevel.findAllSales' },
-      paginationDto,
+      { userId, ...paginationDto },
     );
   }
 
