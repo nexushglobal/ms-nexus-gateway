@@ -130,37 +130,43 @@ export class UnilevelController {
   }
 
   @Post('payments/sale/:id')
-  @Roles('JVE', 'VEN')
+  @Roles('CLI')
   @UseInterceptors(FilesInterceptor('files'))
   createPaymentSale(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() createPaymentSaleDto: CreatePaymentSaleDto,
     @UploadedFiles() files: Express.Multer.File[],
   ) {
+    const payments = Array.isArray(createPaymentSaleDto.payments)
+      ? createPaymentSaleDto.payments
+      : [createPaymentSaleDto.payments];
     return this.unilevelClient.send(
       { cmd: 'unilevel.createPaymentSale' },
       {
+        payments,
         saleId: id,
-        createPaymentSaleDto,
         files: this.prepareFilesForMicroservice(files),
       },
     );
   }
 
-  @Post('financing/installments/paid/:financingId')
-  @Roles('COB', 'SCO')
+  @Post('payment/installments/:financingId')
+  @Roles('CLI')
   @UseInterceptors(FilesInterceptor('files'))
   paidInstallments(
     @Param('financingId', ParseUUIDPipe) financingId: string,
     @Body() paidInstallmentsDto: PaidInstallmentsDto,
     @UploadedFiles() files: Express.Multer.File[],
   ) {
+    const payments = Array.isArray(paidInstallmentsDto.payments)
+      ? paidInstallmentsDto.payments
+      : [paidInstallmentsDto.payments];
     return this.unilevelClient.send(
       { cmd: 'unilevel.paidInstallments' },
       {
         financingId,
         amountPaid: paidInstallmentsDto.amountPaid,
-        payments: paidInstallmentsDto.payments,
+        payments,
         files: this.prepareFilesForMicroservice(files),
       },
     );
