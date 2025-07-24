@@ -28,6 +28,7 @@ import { UsersController } from './users/users.controller';
 import { PaymentsModule } from './payments/payments.module';
 import { MembershipModule } from './membership/membership.module';
 import { UnilevelModule } from './unilevel/unilevel.module';
+import { PointModule } from './point/point.module';
 
 @Module({
   imports: [
@@ -101,6 +102,8 @@ import { UnilevelModule } from './unilevel/unilevel.module';
     MembershipModule,
 
     UnilevelModule,
+
+    PointModule,
   ],
   controllers: [
     MenuController,
