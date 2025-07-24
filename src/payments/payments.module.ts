@@ -1,16 +1,21 @@
 import { Module } from '@nestjs/common';
-import { ClientsModule, Transport } from '@nestjs/microservices';
-import { envs } from 'src/config/envs';
-import { AUTH_SERVICE, PAYMENT_SERVICE } from 'src/config/services';
-import { UserPaymentsController } from './controllers/user-payment.controller';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import { CustomThrottlerGuard } from 'src/common/guards/custom-throttler.guard';
-import { RolesGuard } from 'src/common/guards/roles.guard';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
-import { TimeoutInterceptor } from 'src/common/interceptors/timeout.interceptor';
+import { RolesGuard } from 'src/common/guards/roles.guard';
 import { FileTypeFixInterceptor } from 'src/common/interceptors/file-type-fix.interceptor';
-import { AdminPaymentsController } from './controllers/admin-payments.controller';
+import { TimeoutInterceptor } from 'src/common/interceptors/timeout.interceptor';
+import { envs } from 'src/config/envs';
+import {
+  AUTH_SERVICE,
+  PAYMENT_SERVICE,
+  USERS_SERVICE,
+} from 'src/config/services';
 import { AdminPaymentApprovalController } from './controllers/admin-paymemts-approval.controller';
+import { AdminPaymentsController } from './controllers/admin-payments.controller';
+import { CulqiController } from './controllers/culqi.controller';
+import { UserPaymentsController } from './controllers/user-payment.controller';
 
 @Module({
   imports: [
@@ -29,12 +34,20 @@ import { AdminPaymentApprovalController } from './controllers/admin-paymemts-app
           servers: [envs.NATS_SERVERS],
         },
       },
+      {
+        name: USERS_SERVICE,
+        transport: Transport.NATS,
+        options: {
+          servers: [envs.NATS_SERVERS],
+        },
+      },
     ]),
   ],
   controllers: [
     UserPaymentsController,
     AdminPaymentsController,
     AdminPaymentApprovalController,
+    CulqiController,
   ],
   providers: [
     {
