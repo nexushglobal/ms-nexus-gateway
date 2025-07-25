@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import {
   IsArray,
+  IsBoolean,
   IsDateString,
   IsEnum,
   IsInt,
@@ -11,7 +13,7 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { SaleType } from '../enums/sale-type.enum';
 import { CreateDetailPaymentDto } from './create-detail-payment.dto';
 import { CreateFinancingInstallmentsDto } from './create-financing-installments.dto';
@@ -28,6 +30,11 @@ export class CreateSaleDto {
   })
   @IsNotEmpty({ message: 'El tipo de venta es requerido' })
   saleType: SaleType;
+
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => (value === undefined ? true : value))
+  isSeller?: boolean;
 
   @IsNumber(
     {},
