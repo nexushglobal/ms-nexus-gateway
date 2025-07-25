@@ -2,7 +2,6 @@ import { PartialType } from '@nestjs/mapped-types';
 import {
   IsBoolean,
   IsEmail,
-  IsObject,
   IsOptional,
   IsString,
   Length,
@@ -66,13 +65,13 @@ export class CreateCardDto {
   @IsBoolean({ message: 'validate debe ser un valor booleano.' })
   validate?: boolean = true;
 
-  @IsOptional()
-  @IsObject({ message: 'authentication_3DS debe ser un objeto.' })
-  authentication_3DS?: Record<string, any>;
+  // @IsOptional()
+  // @IsObject({ message: 'authentication_3DS debe ser un objeto.' })
+  // authentication_3DS?: Record<string, any>;
 
-  @IsOptional()
-  @IsObject({ message: 'metadata debe ser un objeto.' })
-  metadata?: Record<string, any>;
+  // @IsOptional()
+  // @IsObject({ message: 'metadata debe ser un objeto.' })
+  // metadata?: Record<string, any>;
 }
 
 export class UpdatePaymentDto extends PartialType(CreatePaymentDto) {}

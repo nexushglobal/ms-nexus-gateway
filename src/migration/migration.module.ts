@@ -9,9 +9,9 @@ import {
 } from '../config/services';
 import { MembershipMigrationController } from './controllers/membership-migration.controller';
 import { PaymentMigrationController } from './controllers/payment-migration.controller';
+import { PointMigrationController } from './controllers/point-migration.controller';
 import { UserMigrationController } from './controllers/user-migration.controller';
 import { MigrationBaseService } from './services/migration-base.service';
-import { PointMigrationController } from './controllers/point-migration.controller';
 
 @Module({
   imports: [

@@ -53,6 +53,7 @@ export class CulqiController {
 
   @Post('card')
   createCardPayment(@UserId() userId: string, @Body() dto: CreateCardDto) {
+    console.log('Creating card payment with data:', dto);
     return this.paymentClient.send(
       { cmd: 'culqi.createCard' },
       { userId, ...dto },
