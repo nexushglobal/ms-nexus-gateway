@@ -16,4 +16,9 @@ export class UserPointsController {
   getUserPoints(@UserId() userId: string) {
     return this.pointClient.send({ cmd: 'userPoints.get' }, { userId });
   }
+
+  @Get('user-lots-points')
+  getUserLotsPoints(@UserId() userId: string) {
+    return this.pointClient.send({ cmd: 'userLotsPoints.get' }, { userId });
+  }
 }
