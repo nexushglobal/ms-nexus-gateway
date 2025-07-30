@@ -72,4 +72,8 @@ export class CreateMembershipSubscriptionDto {
   })
   @Type(() => PaymentDetailDto)
   payments?: PaymentDetailDto[];
+
+  @IsOptional()
+  @IsString()
+  source_id?: string;
 }

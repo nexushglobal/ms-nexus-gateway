@@ -20,15 +20,16 @@ import {
   USERS_SERVICE,
 } from './config/services';
 import { IntegrationController } from './integration/integration.controller';
+import { MembershipModule } from './membership/membership.module';
 import { MigrationModule } from './migration/migration.module';
+import { PaymentsModule } from './payments/payments.module';
+import { PointModule } from './point/point.module';
+import { UnilevelModule } from './unilevel/unilevel.module';
 import { MenuController } from './users/menu.controller';
 import { ProfileController } from './users/profile.controller';
 import { TreeController } from './users/tree.controller';
 import { UsersController } from './users/users.controller';
-import { PaymentsModule } from './payments/payments.module';
-import { MembershipModule } from './membership/membership.module';
-import { UnilevelModule } from './unilevel/unilevel.module';
-import { PointModule } from './point/point.module';
+import { WebhookModule } from './webhook/webhook.module';
 
 @Module({
   imports: [
@@ -104,6 +105,8 @@ import { PointModule } from './point/point.module';
     UnilevelModule,
 
     PointModule,
+
+    WebhookModule,
   ],
   controllers: [
     MenuController,
