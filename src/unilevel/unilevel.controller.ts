@@ -12,19 +12,19 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { UserId } from 'src/common/decorators/current-user.decorator';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { UNILEVEL_SERVICE } from 'src/config/services';
-import { FindAllLotsDto } from './dto/find-all-lots.dto';
 import { CalculateAmortizationDto } from './dto/calculate-amortizacion-dto';
-import { CreateUpdateLeadDto } from './dto/create-update-lead.dto';
 import { CreateClientAndGuarantorDto } from './dto/create-client-and-guarantor.dto';
-import { PaginationDto } from 'src/common/dto/pagination.dto';
-import { CreateSaleDto } from './dto/create-sale.dto';
-import { UserId } from 'src/common/decorators/current-user.decorator';
-import { FilesInterceptor } from '@nestjs/platform-express';
 import { CreatePaymentSaleDto } from './dto/create-payment-sale.dto';
+import { CreateSaleDto } from './dto/create-sale.dto';
+import { CreateUpdateLeadDto } from './dto/create-update-lead.dto';
+import { FindAllLotsDto } from './dto/find-all-lots.dto';
+import { FindAllSalesDto } from './dto/find-all-sales.dto';
 import { PaidInstallmentsDto } from './dto/paid-installments.dto';
 
 @Controller('unilevel/external')
@@ -112,12 +112,12 @@ export class UnilevelController {
 
   @Get('sales')
   findAllSales(
-    @Query() paginationDto: PaginationDto,
+    @Query() findAllSalesDto: FindAllSalesDto,
     @UserId() userId: string,
   ) {
     return this.unilevelClient.send(
       { cmd: 'unilevel.findAllSales' },
-      { userId, ...paginationDto },
+      { userId, ...findAllSalesDto },
     );
   }
 
