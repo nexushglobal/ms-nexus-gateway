@@ -5,8 +5,7 @@ import { LotTransactionRole } from '../enums/lot-transaction-role.enum';
 export class FindAllSalesDto extends PaginationDto {
   @IsOptional()
   @IsEnum(LotTransactionRole, {
-    message:
-      'El campo rol del usuario en venta debe ser una cadena de caracteres',
+    message: 'El campo rol del usuario en venta debe ser: Comprador o Vendedor',
   })
   lotTransactionRole?: LotTransactionRole;
 }
