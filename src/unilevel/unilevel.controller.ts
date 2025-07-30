@@ -129,11 +129,12 @@ export class UnilevelController {
     );
   }
 
-  @Post('payments/sale/:id')
+  @Post('payments/sale')
   @Roles('CLI')
   @UseInterceptors(FilesInterceptor('files'))
   createPaymentSale(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Query('saleId', ParseUUIDPipe) saleId: string,
+    @Query('saleIdReference', ParseUUIDPipe) saleIdReference: string,
     @Body() createPaymentSaleDto: CreatePaymentSaleDto,
     @UploadedFiles() files: Express.Multer.File[],
   ) {
@@ -143,8 +144,9 @@ export class UnilevelController {
     return this.unilevelClient.send(
       { cmd: 'unilevel.createPaymentSale' },
       {
+        saleId,
+        saleIdReference,
         payments,
-        saleId: id,
         files: this.prepareFilesForMicroservice(files),
       },
     );
