@@ -10,9 +10,14 @@ import { envs } from 'src/config/envs';
 import { AUTH_SERVICE, POINT_SERVICE } from 'src/config/services';
 import { PointsTransactionController } from './controllers/points-transaction.controller';
 import { UserPointsController } from './controllers/user-points.controller';
+import { WeeklyVolumeController } from './controllers/weekly-volume.controller';
 
 @Module({
-  controllers: [UserPointsController, PointsTransactionController],
+  controllers: [
+    UserPointsController,
+    PointsTransactionController,
+    WeeklyVolumeController,
+  ],
   imports: [
     ClientsModule.register([
       {
