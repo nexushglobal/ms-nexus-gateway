@@ -21,7 +21,6 @@ import {
 } from './config/services';
 import { IntegrationController } from './integration/integration.controller';
 import { MembershipModule } from './membership/membership.module';
-import { MigrationModule } from './migration/migration.module';
 import { PaymentsModule } from './payments/payments.module';
 import { PointModule } from './point/point.module';
 import { UnilevelModule } from './unilevel/unilevel.module';
@@ -95,8 +94,6 @@ import { WebhookModule } from './webhook/webhook.module';
         },
       },
     ]),
-
-    MigrationModule,
 
     PaymentsModule,
 
