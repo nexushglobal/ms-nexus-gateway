@@ -29,6 +29,7 @@ import { ProfileController } from './users/profile.controller';
 import { TreeController } from './users/tree.controller';
 import { UsersController } from './users/users.controller';
 import { WebhookModule } from './webhook/webhook.module';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
@@ -104,6 +105,8 @@ import { WebhookModule } from './webhook/webhook.module';
     PointModule,
 
     WebhookModule,
+
+    OrderModule,
   ],
   controllers: [
     MenuController,
