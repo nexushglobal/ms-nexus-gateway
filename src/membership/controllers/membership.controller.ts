@@ -45,7 +45,7 @@ export class MembershipController {
         })
         .build({
           errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-          fileIsRequired: true,
+          fileIsRequired: false,
         }),
     )
     files: Array<Express.Multer.File>,

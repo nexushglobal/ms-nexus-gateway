@@ -8,13 +8,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { Public } from 'src/common/decorators/public.decorator';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
-import { PaginationHelper } from 'src/common/helpers/pagination.helper';
-import { USERS_SERVICE } from '../config/services';
-import { RegisterDto } from './dto/register.dto';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
-import { Public } from 'src/common/decorators/public.decorator';
+import { PaginationHelper } from 'src/common/helpers/pagination.helper';
+import { USERS_SERVICE } from '../config/services';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -40,11 +39,6 @@ export class UsersController {
     );
 
     return paginatedData;
-  }
-
-  @Post('register')
-  register(@Body() registerDto: RegisterDto) {
-    return this.userClient.send({ cmd: 'user.register' }, registerDto);
   }
 
   @Public()
