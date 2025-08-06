@@ -1,11 +1,14 @@
 import { Type } from 'class-transformer';
 import {
   IsArray,
+  IsEnum,
   IsNotEmpty,
   IsNumber,
+  IsObject,
   IsString,
   ValidateNested,
 } from 'class-validator';
+import { PointTransactionType } from '../enums/points-transaction-type.enum';
 
 export class DirectBonusUserDto {
   @IsString()
@@ -14,11 +17,31 @@ export class DirectBonusUserDto {
 
   @IsString()
   @IsNotEmpty()
+  userName: string; // Nombre del usuario que compró
+
+  @IsString()
+  @IsNotEmpty()
+  userEmail: string; // Email del usuario que compró
+
+  @IsString()
+  @IsNotEmpty()
   paymentReference: string; // Referencia del pago de este usuario
 
   @IsNumber()
   @IsNotEmpty()
   paymentId: number; // ID del pago de este usuario
+
+  @IsNumber()
+  @IsNotEmpty()
+  directBonus: number; // Bono directo
+
+  @IsObject()
+  @IsNotEmpty()
+  metadata: Record<string, any>; // Metadata obligatoria
+
+  @IsEnum(PointTransactionType)
+  @IsNotEmpty()
+  type: PointTransactionType; // Tipo de transacción de puntos
 }
 
 export class CreateDirectBonusDto {

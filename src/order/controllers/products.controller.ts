@@ -190,7 +190,7 @@ export class ProductsController {
   }
 
   @Delete(':productId/images/:imageId')
-  // @Roles('SYS', 'FAC')
+  @Roles('SYS', 'FAC')
   deleteProductImage(
     @Param('productId', ParseIntPipe) productId: number,
     @Param('imageId', ParseIntPipe) imageId: number,
@@ -200,6 +200,40 @@ export class ProductsController {
       {
         productId,
         imageId,
+      },
+    );
+  }
+
+  @Post('validate-stock-excel')
+  @Roles('SYS', 'FAC')
+  @UseInterceptors(FileInterceptor('file'))
+  @UsePipes(new ValidationPipe({ transform: true }))
+  validateStockExcel(
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+        .addMaxSizeValidator({
+          maxSize: 1024 * 1024 * 10, // 10MB
+        })
+        .build({
+          errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+          fileIsRequired: true,
+        }),
+    )
+    file: Express.Multer.File,
+  ) {
+    const serializedFile = {
+      buffer: file.buffer.toString('base64'),
+      originalname: file.originalname,
+      mimetype: file.mimetype,
+      size: file.size,
+      fieldname: file.fieldname,
+      encoding: file.encoding,
+    };
+
+    return this.orderClient.send(
+      { cmd: 'products.validateStockExcel' },
+      {
+        file: serializedFile,
       },
     );
   }
