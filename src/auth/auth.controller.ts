@@ -2,9 +2,10 @@ import { Body, Controller, Inject, Post } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { Throttle } from '@nestjs/throttler';
 import { Public } from 'src/common/decorators/public.decorator';
-import { AUTH_SERVICE } from '../config/services';
+import { AUTH_SERVICE, USERS_SERVICE } from '../config/services';
 import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { RegisterDto } from './dto/register.dto';
 
 @Public()
 @Controller('auth')
@@ -12,6 +13,7 @@ export class AuthController {
   constructor(
     @Inject(AUTH_SERVICE)
     private readonly authClient: ClientProxy,
+    @Inject(USERS_SERVICE) private readonly userClient: ClientProxy,
   ) {}
 
   @Post('login')
@@ -28,5 +30,10 @@ export class AuthController {
   @Post('verify')
   verifyToken(@Body() data: { token: string }) {
     return this.authClient.send({ cmd: 'auth.verifyToken' }, data);
+  }
+
+  @Post('register')
+  register(@Body() registerDto: RegisterDto) {
+    return this.userClient.send({ cmd: 'user.register' }, registerDto);
   }
 }
