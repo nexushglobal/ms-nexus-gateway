@@ -55,7 +55,7 @@ export class ProductsController {
         })
         .build({
           errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-          fileIsRequired: false,
+          fileIsRequired: true,
         }),
     )
     files: Array<Express.Multer.File> = [],

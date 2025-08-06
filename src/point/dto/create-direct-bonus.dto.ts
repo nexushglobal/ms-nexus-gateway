@@ -12,36 +12,38 @@ import {
 import { PointTransactionType } from '../enums/points-transaction-type.enum';
 
 export class DirectBonusUserDto {
-  @IsString()
-  @IsNotEmpty()
-  userId: string; // ID del usuario que compró (para buscar su referente)
+  @IsString({ message: 'El campo ID de usuario es una cadena de texto' })
+  @IsNotEmpty({ message: 'El campo ID de usuario es obligatorio' })
+  userId: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @IsString({ message: 'El campo nombre de usuario es una cadena de texto' })
+  @IsNotEmpty({ message: 'El campo nombre de usuario es obligatorio' })
   userName: string; // Nombre del usuario que compró
 
-  @IsString()
-  @IsNotEmpty()
+  @IsString({ message: 'El campo email de usuario es una cadena de texto' })
+  @IsNotEmpty({ message: 'El campo email de usuario es obligatorio' })
   userEmail: string; // Email del usuario que compró
 
-  @IsString()
+  @IsString({
+    message: 'El campo de referencia de pago es una cadena de texto',
+  })
   @IsOptional()
   paymentReference?: string; // Referencia del pago de este usuario
 
-  @IsNumber()
+  @IsString({ message: 'El campo de pago es una cadena de texto' })
   @IsOptional()
-  paymentId?: number; // ID del pago de este usuario
+  paymentId?: string;
 
-  @IsNumber()
-  @IsNotEmpty()
+  @IsNumber({}, { message: 'El campo de bono directo es un número' })
+  @IsNotEmpty({ message: 'El campo de bono directo es obligatorio' })
   directBonus: number; // Bono directo
 
-  @IsObject()
-  @IsNotEmpty()
+  @IsObject({ message: 'El campo de metadata es un objeto' })
+  @IsNotEmpty({ message: 'El campo de metadata es obligatorio' })
   metadata: Record<string, any>; // Metadata obligatoria
 
   @IsEnum(PointTransactionType)
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'El campo de tipo de transacción es obligatorio' })
   type: PointTransactionType; // Tipo de transacción de puntos
 }
 
