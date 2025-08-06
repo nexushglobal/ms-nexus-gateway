@@ -5,6 +5,7 @@ import {
   IsNotEmpty,
   IsNumber,
   IsObject,
+  IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
@@ -24,11 +25,11 @@ export class DirectBonusUserDto {
   userEmail: string; // Email del usuario que compró
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   paymentReference?: string; // Referencia del pago de este usuario
 
   @IsNumber()
-  @IsNotEmpty()
+  @IsOptional()
   paymentId?: number; // ID del pago de este usuario
 
   @IsNumber()
