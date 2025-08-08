@@ -8,6 +8,7 @@ import { FileTypeFixInterceptor } from 'src/common/interceptors/file-type-fix.in
 import { TimeoutInterceptor } from 'src/common/interceptors/timeout.interceptor';
 import { envs } from 'src/config/envs';
 import { AUTH_SERVICE, ORDER_SERVICE } from 'src/config/services';
+import { OrdersController } from './controllers/orders.controller';
 import { ProductCategoryController } from './controllers/product-category.controller';
 import { ProductStockHistoryController } from './controllers/product-stock-history.controller';
 import { ProductsController } from './controllers/products.controller';
@@ -35,6 +36,7 @@ import { ProductsController } from './controllers/products.controller';
     ProductCategoryController,
     ProductStockHistoryController,
     ProductsController,
+    OrdersController,
   ],
   providers: [
     {

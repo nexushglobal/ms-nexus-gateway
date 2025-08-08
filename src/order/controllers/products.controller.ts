@@ -25,8 +25,11 @@ import { Roles } from 'src/common/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { ORDER_SERVICE } from 'src/config/services';
+import { AddBenefitDto } from '../dto/add-benefit.dto';
 import { CreateProductDto } from '../dto/create-product.dto';
+import { FindProductsClientDto } from '../dto/find-products-client.dto';
 import { FindProductsDto } from '../dto/find-products.dto';
+import { RemoveBenefitDto } from '../dto/remove-benefit.dto';
 import { UpdateImageDto, UpdateProductDto } from '../dto/update-product.dto';
 import { SerializedFile } from '../interfaces/serialized-file.interface';
 
@@ -80,16 +83,28 @@ export class ProductsController {
   }
 
   @Get()
+  @Roles('SYS', 'FAC')
   findAll(@Query() findProductsDto: FindProductsDto) {
     return this.orderClient.send({ cmd: 'products.findAll' }, findProductsDto);
   }
 
+  @Get('clients/list')
+  @Roles('CLI')
+  findAllForClients(@Query() findProductsClientDto: FindProductsClientDto) {
+    return this.orderClient.send(
+      { cmd: 'products.findAllWithClients' },
+      findProductsClientDto,
+    );
+  }
+
   @Get(':id')
+  @Roles('SYS', 'FAC', 'CLI')
   findOne(@Param('id') id: number) {
     return this.orderClient.send({ cmd: 'products.findOne' }, { id });
   }
 
   @Patch(':id')
+  @Roles('SYS', 'FAC')
   updateProduct(
     @Param('id') id: number,
     @Body() updateProductDto: UpdateProductDto,
@@ -101,6 +116,7 @@ export class ProductsController {
   }
 
   @Get('list/sku-and-name')
+  @Roles('SYS', 'FAC')
   findSkuAndName() {
     return this.orderClient.send({ cmd: 'products.findAllWithSkuAndName' }, {});
   }
@@ -235,6 +251,32 @@ export class ProductsController {
       {
         file: serializedFile,
       },
+    );
+  }
+
+  @Post(':id/benefits')
+  // @Roles('SYS', 'FAC')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  addBenefit(
+    @Param('id', ParseIntPipe) productId: number,
+    @Body() body: AddBenefitDto,
+  ) {
+    return this.orderClient.send(
+      { cmd: 'products.addBenefit' },
+      { productId, benefit: body.benefit },
+    );
+  }
+
+  @Delete(':id/benefits')
+  // @Roles('SYS', 'FAC')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  removeBenefit(
+    @Param('id', ParseIntPipe) productId: number,
+    @Body() body: RemoveBenefitDto,
+  ) {
+    return this.orderClient.send(
+      { cmd: 'products.removeBenefit' },
+      { productId, benefit: body.benefit },
     );
   }
 }
