@@ -90,17 +90,41 @@ export class ProductsController {
 
   @Get('clients/list')
   @Roles('CLI')
-  findAllForClients(@Query() findProductsClientDto: FindProductsClientDto) {
+  findAllForClients(
+    @UserId() userId: string,
+    @Query() findProductsClientDto: FindProductsClientDto,
+  ) {
     return this.orderClient.send(
       { cmd: 'products.findAllWithClients' },
-      findProductsClientDto,
+      { userId, ...findProductsClientDto },
     );
   }
 
   @Get(':id')
-  @Roles('SYS', 'FAC', 'CLI')
+  @Roles('SYS', 'FAC')
   findOne(@Param('id') id: number) {
     return this.orderClient.send({ cmd: 'products.findOne' }, { id });
+  }
+
+  @Get(':id/client')
+  @Roles('CLI')
+  findOneWithClients(
+    @Param('id', ParseIntPipe) id: number,
+    @UserId() userId: string,
+  ) {
+    return this.orderClient.send(
+      { cmd: 'products.findOneWithClients' },
+      { id, userId },
+    );
+  }
+
+  @Get(':id/clients')
+  @Roles('SYS', 'FAC', 'CLI')
+  findOnWithClients(
+    @Param('id', ParseIntPipe) id: number,
+    @UserId() userId: string,
+  ) {
+    return this.orderClient.send({ cmd: 'products.findOne' }, { id, userId });
   }
 
   @Patch(':id')
