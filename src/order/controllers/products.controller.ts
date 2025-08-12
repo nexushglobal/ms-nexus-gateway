@@ -118,14 +118,14 @@ export class ProductsController {
     );
   }
 
-  @Get(':id/clients')
-  @Roles('SYS', 'FAC', 'CLI')
-  findOnWithClients(
-    @Param('id', ParseIntPipe) id: number,
-    @UserId() userId: string,
-  ) {
-    return this.orderClient.send({ cmd: 'products.findOne' }, { id, userId });
-  }
+  // @Get(':id/clients')
+  // @Roles('SYS', 'FAC', 'CLI')
+  // findOnWithClients(
+  //   @Param('id', ParseIntPipe) id: number,
+  //   @UserId() userId: string,
+  // ) {
+  //   return this.orderClient.send({ cmd: 'products.findOne' }, { id, userId });
+  // }
 
   @Patch(':id')
   @Roles('SYS', 'FAC')

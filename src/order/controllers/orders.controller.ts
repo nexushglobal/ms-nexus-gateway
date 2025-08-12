@@ -46,6 +46,7 @@ export class OrdersController {
   }
 
   @Get('my-orders')
+  @Roles('CLI')
   @UsePipes(new ValidationPipe({ transform: true }))
   findMyOrders(
     @UserId() userId: string,
@@ -58,6 +59,7 @@ export class OrdersController {
   }
 
   @Get('my-orders/:id')
+  @Roles('CLI')
   findMyOrder(@Param('id', ParseIntPipe) orderId: number) {
     return this.orderClient.send(
       { cmd: 'orders.findOneWithClients' },

@@ -16,6 +16,7 @@ import { AdminPaymentApprovalController } from './controllers/admin-paymemts-app
 import { AdminPaymentsController } from './controllers/admin-payments.controller';
 import { CulqiController } from './controllers/culqi.controller';
 import { UserPaymentsController } from './controllers/user-payment.controller';
+import { WithdrawalsController } from './controllers/withdrawals.controller';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { UserPaymentsController } from './controllers/user-payment.controller';
     AdminPaymentsController,
     AdminPaymentApprovalController,
     CulqiController,
+    WithdrawalsController,
   ],
   providers: [
     {
