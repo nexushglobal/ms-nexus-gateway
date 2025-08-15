@@ -8,6 +8,7 @@ import { FileTypeFixInterceptor } from 'src/common/interceptors/file-type-fix.in
 import { TimeoutInterceptor } from 'src/common/interceptors/timeout.interceptor';
 import { envs } from 'src/config/envs';
 import { AUTH_SERVICE, POINT_SERVICE } from 'src/config/services';
+import { LotPointsTransactionController } from './controllers/points-lots-transaction.controller';
 import { PointsTransactionController } from './controllers/points-transaction.controller';
 import { UserPointsController } from './controllers/user-points.controller';
 import { WeeklyVolumeController } from './controllers/weekly-volume.controller';
@@ -16,6 +17,7 @@ import { WeeklyVolumeController } from './controllers/weekly-volume.controller';
   controllers: [
     UserPointsController,
     PointsTransactionController,
+    LotPointsTransactionController,
     WeeklyVolumeController,
   ],
   imports: [

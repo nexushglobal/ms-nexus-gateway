@@ -69,7 +69,6 @@ export class MembershipController {
 
   @Get('detail')
   getMembershipDetail(@UserId() userId: string) {
-    console.log('hola, estoy aqui');
     return this.membershipClient.send(
       { cmd: 'membership.getMembershipDetail' },
       { userId },
