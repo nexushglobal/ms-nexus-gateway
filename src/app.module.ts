@@ -1,11 +1,9 @@
 import { Module } from '@nestjs/common';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { ThrottlerModule } from '@nestjs/throttler';
 
 import { AuthController } from './auth/auth.controller';
 import { PasswordResetController } from './auth/password-reset.controller';
-import { CustomThrottlerGuard } from './common/guards/custom-throttler.guard';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 import { FileTypeFixInterceptor } from './common/interceptors/file-type-fix.interceptor';
@@ -33,24 +31,6 @@ import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
-    ThrottlerModule.forRoot([
-      {
-        name: 'short',
-        ttl: 1000,
-        limit: 10,
-      },
-      {
-        name: 'medium',
-        ttl: 10000,
-        limit: 50,
-      },
-      {
-        name: 'long',
-        ttl: envs.RATE_LIMIT_TTL,
-        limit: envs.RATE_LIMIT_MAX,
-      },
-    ]),
-
     ClientsModule.register([
       {
         name: USERS_SERVICE,
@@ -118,10 +98,6 @@ import { OrderModule } from './order/order.module';
     PasswordResetController,
   ],
   providers: [
-    {
-      provide: APP_GUARD,
-      useClass: CustomThrottlerGuard,
-    },
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { CustomThrottlerGuard } from 'src/common/guards/custom-throttler.guard';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { FileTypeFixInterceptor } from 'src/common/interceptors/file-type-fix.interceptor';
@@ -52,10 +51,6 @@ import { WithdrawalsController } from './controllers/withdrawals.controller';
     WithdrawalsController,
   ],
   providers: [
-    {
-      provide: APP_GUARD,
-      useClass: CustomThrottlerGuard,
-    },
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

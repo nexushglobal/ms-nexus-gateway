@@ -4,7 +4,6 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AUTH_SERVICE, UNILEVEL_SERVICE } from 'src/config/services';
 import { envs } from 'src/config/envs';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
-import { CustomThrottlerGuard } from 'src/common/guards/custom-throttler.guard';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { TimeoutInterceptor } from 'src/common/interceptors/timeout.interceptor';
@@ -30,10 +29,6 @@ import { FileTypeFixInterceptor } from 'src/common/interceptors/file-type-fix.in
     ]),
   ],
   providers: [
-    {
-      provide: APP_GUARD,
-      useClass: CustomThrottlerGuard,
-    },
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

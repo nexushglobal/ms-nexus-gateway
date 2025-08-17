@@ -20,7 +20,10 @@ import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { MEMBERSHIP_SERVICE } from 'src/config/services';
-import { CreateMembershipSubscriptionDto } from '../dto/create-membership-subscription.dto';
+import {
+  CreateMembershipSubscriptionDto,
+  CreateReConsumptionDto,
+} from '../dto/create-membership-subscription.dto';
 
 @Controller('membership')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -57,6 +60,44 @@ export class MembershipController {
       {
         userId,
         createDto,
+        files: files.map((file) => ({
+          originalname: file.originalname,
+          buffer: file.buffer,
+          mimetype: file.mimetype,
+          size: file.size,
+        })),
+      },
+    );
+  }
+
+  @Post('reconsumption')
+  @UseInterceptors(FilesInterceptor('paymentImages', 5))
+  @UsePipes(new ValidationPipe({ transform: true }))
+  createReConsumption(
+    @UserId() userId: string,
+    @Body() dto: CreateReConsumptionDto,
+    @UploadedFiles(
+      new ParseFilePipeBuilder()
+        .addFileTypeValidator({
+          fileType: /(jpg|jpeg|png|webp)$/,
+        })
+        .addMaxSizeValidator({
+          maxSize: 1024 * 1024 * 5,
+        })
+        .build({
+          errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+          fileIsRequired: false,
+        }),
+    )
+    files: Array<Express.Multer.File>,
+  ) {
+    console.log('Creating membership re-consumption for user:', files);
+
+    return this.membershipClient.send(
+      { cmd: 'membership.createReConsumption' },
+      {
+        userId,
+        dto,
         files: files.map((file) => ({
           originalname: file.originalname,
           buffer: file.buffer,

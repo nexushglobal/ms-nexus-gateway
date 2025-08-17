@@ -1,6 +1,5 @@
 import { Body, Controller, Inject, Post } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { Throttle } from '@nestjs/throttler';
 import { Public } from 'src/common/decorators/public.decorator';
 import { USERS_SERVICE } from '../config/services';
 import {
@@ -17,7 +16,6 @@ export class PasswordResetController {
   ) {}
 
   @Post('request')
-  @Throttle({ default: { limit: 3, ttl: 60000 } }) // 3 intentos por minuto
   requestPasswordReset(@Body() dto: PasswordResetRequestDto) {
     return this.userClient.send(
       { cmd: 'user.passwordReset.request' },
@@ -26,7 +24,6 @@ export class PasswordResetController {
   }
 
   @Post('validate-token')
-  @Throttle({ default: { limit: 5, ttl: 60000 } }) // 5 intentos por minuto
   validateResetToken(@Body() dto: ValidateResetTokenDto) {
     return this.userClient.send(
       { cmd: 'user.passwordReset.validateToken' },
@@ -35,7 +32,6 @@ export class PasswordResetController {
   }
 
   @Post('reset')
-  @Throttle({ default: { limit: 3, ttl: 60000 } }) // 3 intentos por minuto
   resetPassword(@Body() dto: ResetPasswordDto) {
     return this.userClient.send(
       { cmd: 'user.passwordReset.reset' },

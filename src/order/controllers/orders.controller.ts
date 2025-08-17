@@ -2,22 +2,30 @@
 // (Similar al que tienes para productos)
 
 import {
+  Body,
   Controller,
   Get,
+  HttpStatus,
   Inject,
   Param,
+  ParseFilePipeBuilder,
   ParseIntPipe,
+  Post,
   Query,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { UserId } from 'src/common/decorators/current-user.decorator';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { ORDER_SERVICE } from 'src/config/services';
+import { CreateOrderDto } from '../dto/create-order.dto';
 import { FindAllOrdersAdminDto } from '../dto/find-all-orders-admin.dto';
 import { FindAllOrdersClientDto } from '../dto/find-all-orders-client.dto';
 
@@ -64,6 +72,44 @@ export class OrdersController {
     return this.orderClient.send(
       { cmd: 'orders.findOneWithClients' },
       { orderId },
+    );
+  }
+
+  @Post('create-order')
+  @UseInterceptors(FilesInterceptor('paymentImages', 5))
+  @UsePipes(new ValidationPipe({ transform: true }))
+  createOrder(
+    @UserId() userId: string,
+    @Body() dto: CreateOrderDto,
+    @UploadedFiles(
+      new ParseFilePipeBuilder()
+        .addFileTypeValidator({
+          fileType: /(jpg|jpeg|png|webp)$/,
+        })
+        .addMaxSizeValidator({
+          maxSize: 1024 * 1024 * 5,
+        })
+        .build({
+          errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+          fileIsRequired: false,
+        }),
+    )
+    files: Array<Express.Multer.File>,
+  ) {
+    console.log('Creating order for user:', files);
+
+    return this.orderClient.send(
+      { cmd: 'order.createOrder' },
+      {
+        userId,
+        dto,
+        files: files.map((file) => ({
+          originalname: file.originalname,
+          buffer: file.buffer,
+          mimetype: file.mimetype,
+          size: file.size,
+        })),
+      },
     );
   }
 }

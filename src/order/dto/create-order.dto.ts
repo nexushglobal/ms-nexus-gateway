@@ -10,6 +10,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 
+// DTO for individual payment details
 export class PaymentDetailDto {
   @IsString()
   @IsOptional()
@@ -41,48 +42,36 @@ export class PaymentDetailDto {
   fileIndex: number;
 }
 
-export class CreateMembershipSubscriptionDto {
-  @IsString()
-  @IsNotEmpty({ message: 'El método de pago es requerido' })
-  paymentMethod: string;
+// DTO for order item information
+export class OrderItemDto {
+  @IsNumber()
+  @IsNotEmpty({ message: 'El ID del producto es requerido' })
+  @Type(() => Number)
+  productId: number;
 
   @IsNumber()
-  @Transform(({ value }: { value: string }) => parseInt(value, 10))
-  @IsNotEmpty({ message: 'El ID del plan es requerido' })
-  planId: number;
-
-  @IsOptional()
-  @Transform(({ value }: { value: string }) => {
-    if (typeof value === 'string') {
-      try {
-        const parsed = JSON.parse(value);
-        return Array.isArray(parsed)
-          ? plainToInstance(PaymentDetailDto, parsed)
-          : [];
-      } catch {
-        return [];
-      }
-    }
-    return value;
-  })
-  @IsArray({ message: 'Los detalles de pago deben ser un arreglo' })
-  @ValidateNested({
-    each: true,
-    message: 'Cada detalle de pago debe ser un objeto válido',
-  })
-  @Type(() => PaymentDetailDto)
-  payments?: PaymentDetailDto[];
-
-  @IsOptional()
-  @IsString()
-  source_id?: string;
+  @IsNotEmpty({ message: 'La cantidad es requerida' })
+  @Min(1, { message: 'La cantidad debe ser al menos 1' })
+  @Type(() => Number)
+  quantity: number;
 }
 
-export class CreateReConsumptionDto {
+export class CreateOrderDto {
   @IsString()
   @IsNotEmpty({ message: 'El método de pago es requerido' })
   paymentMethod: string;
 
+  @IsNumber(
+    { maxDecimalPlaces: 2 },
+    {
+      message: 'El monto total debe ser un número válido con hasta 2 decimales',
+    },
+  )
+  @Min(0, { message: 'El monto total no puede ser negativo' })
+  @IsNotEmpty({ message: 'El monto total del pago es requerido' })
+  @Type(() => Number)
+  totalAmount: number;
+
   @IsOptional()
   @Transform(({ value }: { value: string }) => {
     if (typeof value === 'string') {
@@ -104,6 +93,37 @@ export class CreateReConsumptionDto {
   })
   @Type(() => PaymentDetailDto)
   payments?: PaymentDetailDto[];
+
+  @Transform(({ value }) => {
+    if (typeof value === 'string') {
+      try {
+        const parsed = JSON.parse(value);
+        return Array.isArray(parsed)
+          ? plainToInstance(OrderItemDto, parsed)
+          : [];
+      } catch {
+        return [];
+      }
+    }
+    return value;
+  })
+  @IsArray({ message: 'Los detalles de la orden deben ser un arreglo' })
+  @ValidateNested({
+    each: true,
+    message: 'Cada item de la orden debe ser un objeto válido',
+  })
+  @Type(() => OrderItemDto)
+  items: OrderItemDto[];
+
+  @IsString()
+  @IsOptional()
+  @Transform(({ value }) => value?.trim())
+  paymentReference?: string;
+
+  @IsString()
+  @IsOptional()
+  @Transform(({ value }) => value?.trim())
+  notes?: string;
 
   @IsOptional()
   @IsString()
