@@ -83,6 +83,10 @@ export class CreateReConsumptionDto {
   @IsNotEmpty({ message: 'El método de pago es requerido' })
   paymentMethod: string;
 
+  @IsNumber()
+  @Transform(({ value }: { value: string }) => parseInt(value, 10))
+  membershipId: number;
+
   @IsOptional()
   @Transform(({ value }: { value: string }) => {
     if (typeof value === 'string') {
