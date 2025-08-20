@@ -15,6 +15,7 @@ import {
 import { AdminPaymentApprovalController } from './controllers/admin-paymemts-approval.controller';
 import { AdminPaymentsController } from './controllers/admin-payments.controller';
 import { CulqiController } from './controllers/culqi.controller';
+import { ReportsController } from './controllers/reports.controller';
 import { UserPaymentsController } from './controllers/user-payment.controller';
 import { WithdrawalsController } from './controllers/withdrawals.controller';
 
@@ -50,6 +51,7 @@ import { WithdrawalsController } from './controllers/withdrawals.controller';
     AdminPaymentApprovalController,
     CulqiController,
     WithdrawalsController,
+    ReportsController,
   ],
   providers: [
     {
