@@ -20,7 +20,7 @@ export class UserPointsController {
 
   @Get('user-lots-points')
   getUserLotsPoints(@UserId() userId: string) {
-    return this.pointClient.send({ cmd: 'userLotsPoints.get' }, { userId });
+    return this.pointClient.send({ cmd: 'userLotPoints.get' }, { userId });
   }
 
   @Post('create-direct-points')

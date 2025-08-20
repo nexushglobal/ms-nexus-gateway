@@ -19,7 +19,7 @@ export class LotPointsTransactionController {
     @Query() findPointsTransactionDto: FindPointsTransactionDto,
   ) {
     return this.pointClient.send(
-      { cmd: 'pointsLotsTransaction.get' },
+      { cmd: 'pointsLotTransaction.get' },
       {
         userId,
         ...findPointsTransactionDto,

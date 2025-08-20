@@ -7,8 +7,6 @@ interface EnvVars {
   NATS_SERVERS: string;
   ORIGIN: string[];
 
-  RATE_LIMIT_TTL: number;
-  RATE_LIMIT_MAX: number;
   REQUEST_TIMEOUT_MS: number;
 }
 
@@ -24,14 +22,6 @@ const envsSchema = joi
       .valid('development', 'production', 'test')
       .default('development'),
 
-    RATE_LIMIT_TTL: joi
-      .number()
-      .default(60000)
-      .description('Rate limit time window in milliseconds'),
-    RATE_LIMIT_MAX: joi
-      .number()
-      .default(100)
-      .description('Maximum requests per time window'),
     ORIGIN: joi
       .alternatives()
       .try(

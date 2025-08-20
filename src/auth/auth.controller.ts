@@ -1,6 +1,5 @@
 import { Body, Controller, Inject, Post } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { Throttle } from '@nestjs/throttler';
 import { Public } from 'src/common/decorators/public.decorator';
 import { AUTH_SERVICE, USERS_SERVICE } from '../config/services';
 import { LoginDto } from './dto/login.dto';
@@ -17,7 +16,6 @@ export class AuthController {
   ) {}
 
   @Post('login')
-  @Throttle({ default: { limit: 20, ttl: 60000 } })
   login(@Body() loginDto: LoginDto) {
     return this.authClient.send({ cmd: 'auth.login' }, loginDto);
   }
