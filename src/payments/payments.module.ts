@@ -9,6 +9,7 @@ import { envs } from 'src/config/envs';
 import {
   AUTH_SERVICE,
   PAYMENT_SERVICE,
+  POINT_SERVICE,
   USERS_SERVICE,
 } from 'src/config/services';
 import { AdminPaymentApprovalController } from './controllers/admin-paymemts-approval.controller';
@@ -36,6 +37,13 @@ import { WithdrawalsController } from './controllers/withdrawals.controller';
       },
       {
         name: USERS_SERVICE,
+        transport: Transport.NATS,
+        options: {
+          servers: [envs.NATS_SERVERS],
+        },
+      },
+      {
+        name: POINT_SERVICE,
         transport: Transport.NATS,
         options: {
           servers: [envs.NATS_SERVERS],
