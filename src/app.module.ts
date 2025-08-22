@@ -10,6 +10,7 @@ import { FileTypeFixInterceptor } from './common/interceptors/file-type-fix.inte
 import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor';
 import { envs } from './config/envs';
 import {
+  APP_SERVICE,
   AUTH_SERVICE,
   INTEGRATION_SERVICE,
   PAYMENT_SERVICE,
@@ -28,6 +29,9 @@ import { TreeController } from './users/tree.controller';
 import { UsersController } from './users/users.controller';
 import { WebhookModule } from './webhook/webhook.module';
 import { OrderModule } from './order/order.module';
+import { BannerModule } from './banner/banner.module';
+import { LeadsModule } from './leads/leads.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -74,6 +78,13 @@ import { OrderModule } from './order/order.module';
           servers: [envs.NATS_SERVERS],
         },
       },
+      {
+        name: APP_SERVICE,
+        transport: Transport.NATS,
+        options: {
+          servers: [envs.NATS_SERVERS],
+        },
+      },
     ]),
 
     PaymentsModule,
@@ -87,6 +98,12 @@ import { OrderModule } from './order/order.module';
     WebhookModule,
 
     OrderModule,
+
+    BannerModule,
+
+    LeadsModule,
+
+    DashboardModule,
   ],
   controllers: [
     MenuController,

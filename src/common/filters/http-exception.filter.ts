@@ -1,14 +1,14 @@
 import {
-  Catch,
   ArgumentsHost,
+  Catch,
   ExceptionFilter,
   HttpException,
   Logger,
 } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 import { Request, Response } from 'express';
-import { RpcError } from '../interfaces/rpc-error.interface';
 import { createBaseLogInfo } from '../helpers/create-base-log-info.helper';
+import { RpcError } from '../interfaces/rpc-error.interface';
 
 @Catch()
 export class RpcCustomExceptionFilter implements ExceptionFilter {
@@ -150,6 +150,7 @@ export class RpcCustomExceptionFilter implements ExceptionFilter {
       level: 'ERROR',
       type: errorType,
       service: serviceInfo,
+
       error: {
         status,
         message,
