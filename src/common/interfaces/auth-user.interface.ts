@@ -10,6 +10,10 @@ export interface AuthUser {
     firstName: string;
     lastName: string;
   };
+  billingInfo?: {
+    ruc: string;
+    razonSocial: string;
+  };
   isActive: boolean;
 }
 
