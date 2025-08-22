@@ -6,9 +6,15 @@ import { RolesGuard } from 'src/common/guards/roles.guard';
 import { FileTypeFixInterceptor } from 'src/common/interceptors/file-type-fix.interceptor';
 import { TimeoutInterceptor } from 'src/common/interceptors/timeout.interceptor';
 import { envs } from 'src/config/envs';
-import { AUTH_SERVICE, POINT_SERVICE } from 'src/config/services';
+import {
+  AUTH_SERVICE,
+  PAYMENT_SERVICE,
+  POINT_SERVICE,
+} from 'src/config/services';
+import { MonthlyVolumeController } from './controllers/monthly-volume.controller';
 import { LotPointsTransactionController } from './controllers/points-lots-transaction.controller';
 import { PointsTransactionController } from './controllers/points-transaction.controller';
+import { RankController } from './controllers/rank.controller';
 import { UserPointsController } from './controllers/user-points.controller';
 import { WeeklyVolumeController } from './controllers/weekly-volume.controller';
 
@@ -18,6 +24,8 @@ import { WeeklyVolumeController } from './controllers/weekly-volume.controller';
     PointsTransactionController,
     LotPointsTransactionController,
     WeeklyVolumeController,
+    MonthlyVolumeController,
+    RankController,
   ],
   imports: [
     ClientsModule.register([
@@ -30,6 +38,13 @@ import { WeeklyVolumeController } from './controllers/weekly-volume.controller';
       },
       {
         name: AUTH_SERVICE,
+        transport: Transport.NATS,
+        options: {
+          servers: [envs.NATS_SERVERS],
+        },
+      },
+      {
+        name: PAYMENT_SERVICE,
         transport: Transport.NATS,
         options: {
           servers: [envs.NATS_SERVERS],
