@@ -2,14 +2,21 @@ import {
   Body,
   Controller,
   Get,
+  HttpStatus,
   Inject,
   Param,
+  ParseFilePipeBuilder,
   ParseIntPipe,
   Post,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { firstValueFrom } from 'rxjs';
 import {
   CurrentUser,
@@ -43,11 +50,20 @@ export class WithdrawalsController {
 
   @Post()
   @Roles('CLI')
-  async createWithdrawal(@Body() createWithdrawalDto: CreateWithdrawalDto) {
+  async createWithdrawal(
+    @Body() createWithdrawalDto: CreateWithdrawalDto,
+    @CurrentUser() user: AuthUser,
+  ) {
     return firstValueFrom(
       this.withdrawalClient.send(
         { cmd: 'withdrawals.create' },
-        createWithdrawalDto,
+        {
+          ...createWithdrawalDto,
+          userDocumentNumber:
+            user.billingInfo?.ruc ?? 'Dato no registrado en el sistema',
+          userRazonSocial:
+            user.billingInfo?.razonSocial ?? 'Dato no registrado en el sistema',
+        },
       ),
     );
   }
@@ -185,6 +201,49 @@ export class WithdrawalsController {
         { cmd: 'withdrawals.findUserWithdrawals' },
         { userId, filters },
       ),
+    );
+  }
+
+  @Post(':id/signature')
+  @Roles('CLI')
+  @UseInterceptors(FileInterceptor('signature'))
+  @UsePipes(new ValidationPipe({ transform: true }))
+  addSignatureToWithdrawal(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: AuthUser,
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+        .addFileTypeValidator({
+          fileType: /(jpg|jpeg|png|webp)$/,
+        })
+        .addMaxSizeValidator({
+          maxSize: 1024 * 1024 * 5, // 5MB
+        })
+        .build({
+          errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+          fileIsRequired: true,
+        }),
+    )
+    file: Express.Multer.File,
+  ) {
+    const serializedFile = {
+      buffer: file.buffer.toString('base64'),
+      originalname: file.originalname,
+      mimetype: file.mimetype,
+      size: file.size,
+      fieldname: file.fieldname,
+      encoding: file.encoding,
+    };
+    return this.withdrawalClient.send(
+      { cmd: 'withdrawals.signReport' },
+      {
+        withdrawalId: id,
+        userDocumentNumber:
+          user.billingInfo?.ruc ?? 'Dato no registrado en el sistema',
+        userRazonSocial:
+          user.billingInfo?.razonSocial ?? 'Dato no registrado en el sistema',
+        file: serializedFile,
+      },
     );
   }
 
