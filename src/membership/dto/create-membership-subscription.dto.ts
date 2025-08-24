@@ -87,6 +87,12 @@ export class CreateReConsumptionDto {
   @Transform(({ value }: { value: string }) => parseInt(value, 10))
   membershipId: number;
 
+  @IsNumber()
+  @Transform(({ value }: { value: string }) => parseFloat(value))
+  @IsNotEmpty({ message: 'El monto del reconsumo es requerido' })
+  @Min(0, { message: 'El monto no puede ser negativo' })
+  amount: number;
+
   @IsOptional()
   @Transform(({ value }: { value: string }) => {
     if (typeof value === 'string') {

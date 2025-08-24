@@ -60,7 +60,7 @@ export class MembershipController {
       {
         userId,
         createDto,
-        files: files.map((file) => ({
+        files: (files || []).map((file) => ({
           originalname: file.originalname,
           buffer: file.buffer,
           mimetype: file.mimetype,
@@ -98,7 +98,7 @@ export class MembershipController {
       {
         userId,
         dto,
-        files: files.map((file) => ({
+        files: (files || []).map((file) => ({
           originalname: file.originalname,
           buffer: file.buffer,
           mimetype: file.mimetype,
