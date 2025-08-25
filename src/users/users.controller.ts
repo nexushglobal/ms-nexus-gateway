@@ -8,12 +8,15 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { Public } from 'src/common/decorators/public.decorator';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { PaginationHelper } from 'src/common/helpers/pagination.helper';
+import { AuthUser } from 'src/common/interfaces/auth-user.interface';
 import { USERS_SERVICE } from '../config/services';
+import { DashboardDto } from './dto/dashboard.dto';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -39,6 +42,19 @@ export class UsersController {
     );
 
     return paginatedData;
+  }
+
+  @Get('dashboard')
+  getUsersDashboard(
+    @Query() dashboardDto: DashboardDto,
+    @CurrentUser() currentUser: AuthUser,
+  ) {
+    const { page, limit, sortBy, sortOrder } = dashboardDto;
+
+    return this.userClient.send(
+      { cmd: 'users.getUsersDashboard' },
+      { page, limit, sortBy, sortOrder, currentUserId: currentUser.id },
+    );
   }
 
   @Public()
