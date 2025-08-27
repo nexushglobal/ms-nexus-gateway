@@ -2,8 +2,10 @@ import { Module } from '@nestjs/common';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 
+import { AppDashboardModule } from './app/app.module';
 import { AuthController } from './auth/auth.controller';
 import { PasswordResetController } from './auth/password-reset.controller';
+import { BannerModule } from './banner/banner.module';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 import { FileTypeFixInterceptor } from './common/interceptors/file-type-fix.interceptor';
@@ -18,8 +20,11 @@ import {
   UNILEVEL_SERVICE,
   USERS_SERVICE,
 } from './config/services';
+import { DashboardModule } from './dashboard/dashboard.module';
 import { IntegrationController } from './integration/integration.controller';
+import { LeadsModule } from './leads/leads.module';
 import { MembershipModule } from './membership/membership.module';
+import { OrderModule } from './order/order.module';
 import { PaymentsModule } from './payments/payments.module';
 import { PointModule } from './point/point.module';
 import { UnilevelModule } from './unilevel/unilevel.module';
@@ -28,10 +33,6 @@ import { ProfileController } from './users/profile.controller';
 import { TreeController } from './users/tree.controller';
 import { UsersController } from './users/users.controller';
 import { WebhookModule } from './webhook/webhook.module';
-import { OrderModule } from './order/order.module';
-import { BannerModule } from './banner/banner.module';
-import { LeadsModule } from './leads/leads.module';
-import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -104,6 +105,8 @@ import { DashboardModule } from './dashboard/dashboard.module';
     LeadsModule,
 
     DashboardModule,
+
+    AppDashboardModule,
   ],
   controllers: [
     MenuController,
