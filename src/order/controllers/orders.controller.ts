@@ -20,7 +20,11 @@ import {
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { UserId } from 'src/common/decorators/current-user.decorator';
+import {
+  UserEmail,
+  UserId,
+  UserName,
+} from 'src/common/decorators/current-user.decorator';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
@@ -75,11 +79,23 @@ export class OrdersController {
     );
   }
 
-  @Post('create-order')
+  @Post('admin/:id/mark-as-sent')
+  @Roles('SYS', 'FAC', 'ADM')
+  markOrderAsSent(@Param('id', ParseIntPipe) orderId: number) {
+    return this.orderClient.send(
+      { cmd: 'orders.markOrderAsSent' },
+      { orderId },
+    );
+  }
+
+  @Post()
+  @Roles('CLI')
   @UseInterceptors(FilesInterceptor('paymentImages', 5))
   @UsePipes(new ValidationPipe({ transform: true }))
   createOrder(
     @UserId() userId: string,
+    @UserEmail() userEmail: string,
+    @UserName() userName: string,
     @Body() dto: CreateOrderDto,
     @UploadedFiles(
       new ParseFilePipeBuilder()
@@ -99,16 +115,22 @@ export class OrdersController {
     console.log('Creating order for user:', files);
 
     return this.orderClient.send(
-      { cmd: 'order.createOrder' },
+      { cmd: 'orders.createOrder' },
       {
         userId,
-        dto,
-        files: files.map((file) => ({
-          originalname: file.originalname,
-          buffer: file.buffer,
-          mimetype: file.mimetype,
-          size: file.size,
-        })),
+        dto: {
+          ...dto,
+          userId,
+          userEmail,
+          userName,
+        },
+        files:
+          files?.map((file) => ({
+            originalname: file.originalname,
+            buffer: file.buffer,
+            mimetype: file.mimetype,
+            size: file.size,
+          })) || [],
       },
     );
   }

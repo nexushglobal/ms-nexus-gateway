@@ -2,6 +2,7 @@ import { plainToInstance, Transform, Type } from 'class-transformer';
 import {
   IsArray,
   IsDateString,
+  IsEnum,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -9,6 +10,12 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator';
+
+export enum PaymentMethod {
+  VOUCHER = 'VOUCHER',
+  POINTS = 'POINTS',
+  PAYMENT_GATEWAY = 'PAYMENT_GATEWAY',
+}
 
 // DTO for individual payment details
 export class PaymentDetailDto {
@@ -57,9 +64,8 @@ export class OrderItemDto {
 }
 
 export class CreateOrderDto {
-  @IsString()
-  @IsNotEmpty({ message: 'El método de pago es requerido' })
-  paymentMethod: string;
+  @IsEnum(PaymentMethod, { message: 'Método de pago no válido' })
+  paymentMethod: PaymentMethod;
 
   @IsNumber(
     { maxDecimalPlaces: 2 },
@@ -115,17 +121,7 @@ export class CreateOrderDto {
   @Type(() => OrderItemDto)
   items: OrderItemDto[];
 
-  @IsString()
-  @IsOptional()
-  @Transform(({ value }) => value?.trim())
-  paymentReference?: string;
-
-  @IsString()
-  @IsOptional()
-  @Transform(({ value }) => value?.trim())
-  notes?: string;
-
   @IsOptional()
   @IsString()
-  source_id?: string;
+  sourceId?: string;
 }

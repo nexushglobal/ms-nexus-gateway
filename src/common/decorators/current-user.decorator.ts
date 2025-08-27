@@ -15,3 +15,13 @@ export const CurrentUser = createParamDecorator(
 export const UserId = () => CurrentUser('id');
 export const UserEmail = () => CurrentUser('email');
 export const UserRole = () => CurrentUser('role');
+export const UserName = createParamDecorator(
+  (data: unknown, ctx: ExecutionContext): string | undefined => {
+    const request = ctx.switchToHttp().getRequest();
+    const user: AuthUser = request.user;
+    if (user?.personalInfo?.firstName && user?.personalInfo?.lastName) {
+      return `${user.personalInfo.firstName} ${user.personalInfo.lastName}`;
+    }
+    return undefined;
+  },
+);
