@@ -19,7 +19,6 @@ import {
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Public } from '../../common/decorators/public.decorator';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { PaginationDto } from '../../common/dto/pagination.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
@@ -141,7 +140,6 @@ export class BannerController {
   }
 
   @Get('active')
-  @Public()
   @Roles('CLI')
   findActiveBanners() {
     return this.appClient.send('banner.findActiveOnly', {});

@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsOptional, IsPositive, Max, Min, IsIn } from 'class-validator';
+import { IsIn, IsOptional, IsPositive, Max, Min } from 'class-validator';
 
 export class DashboardDto {
   @IsOptional()
