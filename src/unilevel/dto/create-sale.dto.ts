@@ -1,3 +1,4 @@
+import { Transform, Type } from 'class-transformer';
 import {
   IsArray,
   IsBoolean,
@@ -12,7 +13,6 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator';
-import { Transform, Type } from 'class-transformer';
 import { SaleType } from '../enums/sale-type.enum';
 import { CreateDetailPaymentDto } from './create-detail-payment.dto';
 import { CreateFinancingInstallmentsDto } from './create-financing-installments.dto';
@@ -157,4 +157,11 @@ export class CreateSaleDto {
   @IsOptional()
   @Type(() => Boolean)
   isReservation?: boolean = false;
+
+  @IsString({
+    message: 'El nombre del proyecto debe ser una cadena de caracteres',
+  })
+  @IsNotEmpty({ message: 'El nombre del proyecto es requerido' })
+  @Transform(({ value }) => value?.toString().toUpperCase())
+  projectName: string;
 }

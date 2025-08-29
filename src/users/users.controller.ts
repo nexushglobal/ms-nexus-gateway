@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Inject,
+  Param,
   Post,
   Query,
   UseGuards,
@@ -54,6 +55,14 @@ export class UsersController {
     return this.userClient.send(
       { cmd: 'users.getUsersDashboard' },
       { page, limit, sortBy, sortOrder, currentUserId: currentUser.id },
+    );
+  }
+
+  @Get('parent-chain')
+  getParentChain(@CurrentUser() currentUser: AuthUser) {
+    return this.userClient.send(
+      { cmd: 'user.tree.getParentChain' },
+      { userId: currentUser.id },
     );
   }
 
