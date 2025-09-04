@@ -17,8 +17,8 @@ import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { APP_SERVICE } from '../config/services';
 import { CreateLeadDto } from './dto/create-lead.dto';
-import { FindLeadsDto } from './dto/find-leads.dto';
 import { DownloadLeadsDto } from './dto/download-leads.dto';
+import { FindLeadsDto } from './dto/find-leads.dto';
 
 @Controller('leads')
 export class LeadsController {

@@ -32,14 +32,17 @@ export class ComplaintsController {
   @Post()
   @UsePipes(new ValidationPipe({ transform: true }))
   createComplaint(@Body() createComplaintDto: CreateComplaintDto) {
-    return this.appClient.send('complaints.create', createComplaintDto);
+    return this.appClient.send(
+      { cmd: 'complaints.create' },
+      createComplaintDto,
+    );
   }
 
   @Get()
   @Roles('FAC')
   @UsePipes(new ValidationPipe({ transform: true }))
   findAll(@Query() dto: FindComplaintsDto) {
-    return this.appClient.send('complaints.findAll', dto);
+    return this.appClient.send({ cmd: 'complaints.findAll' }, dto);
   }
 
   @Post(':id/attend')
@@ -48,9 +51,12 @@ export class ComplaintsController {
     @Param('id', ParseIntPipe) id: number,
     @Body() body: { attended: boolean },
   ) {
-    return this.appClient.send('complaints.updateStatus', {
-      id,
-      ...body,
-    });
+    return this.appClient.send(
+      { cmd: 'complaints.updateStatus' },
+      {
+        id,
+        ...body,
+      },
+    );
   }
 }
