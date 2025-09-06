@@ -63,7 +63,7 @@ export class ProfileController {
   ) {
     return this.userClient.send(
       { cmd: 'user.profile.updateBillingInfo' },
-      { userId, updateBillingInfoDto },
+      { userId, updateBillingInfoDto: updateBillingInfoDto },
     );
   }
 

@@ -1,14 +1,15 @@
 import {
-  Controller,
-  Post,
   Body,
+  Controller,
   Inject,
+  Post,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { ClientProxy } from '@nestjs/microservices';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { Observable } from 'rxjs';
+import { Public } from 'src/common/decorators/public.decorator';
 import { INTEGRATION_SERVICE } from '../config/services';
 import { DocumentDto } from './dto/validate-document.dto';
 
@@ -50,6 +51,7 @@ export class IntegrationController {
   }
 
   @Post('document/validate')
+  @Public()
   validateDocument(@Body() documentData: DocumentDto) {
     return this.integrationClient.send(
       { cmd: 'integration.document.validateDocument' },
