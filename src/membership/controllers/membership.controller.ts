@@ -24,6 +24,7 @@ import {
   CreateMembershipSubscriptionDto,
   CreateReConsumptionDto,
 } from '../dto/create-membership-subscription.dto';
+import { CreateManualSubscriptionDto } from '../dto/manual-subscription.dto';
 
 @Controller('membership')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -105,6 +106,17 @@ export class MembershipController {
           size: file.size,
         })),
       },
+    );
+  }
+
+  @Post('manual-subscription')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  createManualSubscription(@Body() dto: CreateManualSubscriptionDto) {
+    console.log('Creating manual membership subscription:', dto);
+
+    return this.membershipClient.send(
+      { cmd: 'membership.createManualSubscription' },
+      dto,
     );
   }
 
