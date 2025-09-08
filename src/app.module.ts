@@ -34,6 +34,7 @@ import { TreeController } from './users/tree.controller';
 import { UsersController } from './users/users.controller';
 import { WebhookModule } from './webhook/webhook.module';
 import { ReportsModule } from './reports/reports.module';
+import { TestApiModule } from './test-api/test-api.module';
 
 @Module({
   imports: [
@@ -110,6 +111,8 @@ import { ReportsModule } from './reports/reports.module';
     ReportsModule,
 
     AppDashboardModule,
+
+    TestApiModule,
   ],
   controllers: [
     MenuController,
