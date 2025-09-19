@@ -1,7 +1,9 @@
 import { Body, Controller, HttpException, Logger, Post } from '@nestjs/common';
+import { Public } from 'src/common/decorators/public.decorator';
 import { CulqiWebhookEvent } from './interfaces/culqi-webhook.interface';
 import { CulqiChargeService } from './services/culqi-charge.service';
 
+@Public()
 @Controller('webhook')
 export class WebhookController {
   private readonly logger = new Logger(WebhookController.name);
