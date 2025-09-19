@@ -1,11 +1,12 @@
 import {
   Controller,
   Get,
-  Query,
-  UseGuards,
+  Inject,
   Logger,
   Param,
-  Inject,
+  Post,
+  Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
@@ -14,8 +15,8 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { PaginationHelper } from 'src/common/helpers/pagination.helper';
 import { PAYMENT_SERVICE } from 'src/config/services';
-import { PaymentFiltersDto } from '../dto/payment-filter.dto';
 import { PaymentDetailDto } from '../dto/payment-detail.dto';
+import { PaymentFiltersDto } from '../dto/payment-filter.dto';
 
 @Controller('admin/payments')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -99,6 +100,20 @@ export class AdminPaymentsController {
         `❌ Error obteniendo detalle del pago ${params.id}:`,
         error,
       );
+      throw error;
+    }
+  }
+
+  @Post('process-voume/:id')
+  @Roles('FAC')
+  processBinaryVolumePoints(@Param('id') id: number) {
+    try {
+      return this.paymentClient.send(
+        { cmd: 'payment.admin.processBinaryVolumePoints' },
+        { paymentId: id },
+      );
+    } catch (error) {
+      this.logger.error(`❌ Error obteniendo detalle del pago ${id}:`, error);
       throw error;
     }
   }
