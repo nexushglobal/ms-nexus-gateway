@@ -18,14 +18,14 @@ import { Roles } from 'src/common/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { UNILEVEL_SERVICE } from 'src/config/services';
-import { CalculateAmortizationDto } from './dto/calculate-amortizacion-dto';
-import { CreateClientAndGuarantorDto } from './dto/create-client-and-guarantor.dto';
-import { CreatePaymentSaleDto } from './dto/create-payment-sale.dto';
-import { CreateSaleDto } from './dto/create-sale.dto';
-import { CreateUpdateLeadDto } from './dto/create-update-lead.dto';
-import { FindAllLotsDto } from './dto/find-all-lots.dto';
-import { FindAllSalesDto } from './dto/find-all-sales.dto';
-import { PaidInstallmentsDto } from './dto/paid-installments.dto';
+import { CalculateAmortizationDto } from './../dto/calculate-amortizacion-dto';
+import { CreateClientAndGuarantorDto } from './../dto/create-client-and-guarantor.dto';
+import { CreatePaymentSaleDto } from './../dto/create-payment-sale.dto';
+import { CreateSaleDto } from './../dto/create-sale.dto';
+import { CreateUpdateLeadDto } from './../dto/create-update-lead.dto';
+import { FindAllLotsDto } from './../dto/find-all-lots.dto';
+import { FindAllSalesDto } from './../dto/find-all-sales.dto';
+import { PaidInstallmentsDto } from './../dto/paid-installments.dto';
 
 @Controller('unilevel/external')
 @UseGuards(JwtAuthGuard, RolesGuard)

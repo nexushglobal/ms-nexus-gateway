@@ -6,7 +6,7 @@ interface EnvVars {
   NODE_ENV: 'development' | 'production' | 'test';
   NATS_SERVERS: string;
   ORIGIN: string[];
-
+  API_KEY: string;
   REQUEST_TIMEOUT_MS: number;
 }
 
@@ -46,6 +46,7 @@ const envsSchema = joi
         'http://localhost:4321',
         'http://app.hoppscotch',
       ]),
+    API_KEY: joi.string().default('secret').description('API Key'),
     REQUEST_TIMEOUT_MS: joi
       .number()
       .default(120000)

@@ -1,13 +1,14 @@
 import { Module } from '@nestjs/common';
-import { UnilevelController } from './unilevel.controller';
-import { ClientsModule, Transport } from '@nestjs/microservices';
-import { AUTH_SERVICE, UNILEVEL_SERVICE } from 'src/config/services';
-import { envs } from 'src/config/envs';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
-import { TimeoutInterceptor } from 'src/common/interceptors/timeout.interceptor';
 import { FileTypeFixInterceptor } from 'src/common/interceptors/file-type-fix.interceptor';
+import { TimeoutInterceptor } from 'src/common/interceptors/timeout.interceptor';
+import { envs } from 'src/config/envs';
+import { AUTH_SERVICE, UNILEVEL_SERVICE } from 'src/config/services';
+import { UnilevelExternalController } from './controllers/unilevel-external.controller';
+import { UnilevelController } from './controllers/unilevel.controller';
 
 @Module({
   imports: [
@@ -46,6 +47,6 @@ import { FileTypeFixInterceptor } from 'src/common/interceptors/file-type-fix.in
       useClass: FileTypeFixInterceptor,
     },
   ],
-  controllers: [UnilevelController],
+  controllers: [UnilevelController, UnilevelExternalController],
 })
 export class UnilevelModule {}
