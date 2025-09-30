@@ -65,6 +65,14 @@ export class UsersController {
     );
   }
 
+  @Get('volume-validation')
+  getVolumeProcessingValidation(@CurrentUser() currentUser: AuthUser) {
+    return this.userClient.send(
+      { cmd: 'user.validation.volumeProcessing' },
+      { userId: currentUser.id },
+    );
+  }
+
   @Public()
   @Post('infoEmail')
   getInfo(@Body() payload: { email: string }) {
