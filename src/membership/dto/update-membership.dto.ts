@@ -12,4 +12,8 @@ export class UpdateMembershipDto {
   @IsOptional()
   @IsBoolean()
   isPointLot?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  welcomeKitDelivered?: boolean;
 }

@@ -4,7 +4,9 @@ import {
   Get,
   HttpStatus,
   Inject,
+  Param,
   ParseFilePipeBuilder,
+  Patch,
   Post,
   Query,
   UploadedFiles,
@@ -24,7 +26,9 @@ import {
   CreateMembershipSubscriptionDto,
   CreateReConsumptionDto,
 } from '../dto/create-membership-subscription.dto';
+import { ListMembershipsQueryDto } from '../dto/list-memberships.dto';
 import { CreateManualSubscriptionDto } from '../dto/manual-subscription.dto';
+import { UpdateWelcomeKitStatusDto } from '../dto/update-welcome-kit-status.dto';
 
 @Controller('membership')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -136,6 +140,28 @@ export class MembershipController {
     return this.membershipClient.send(
       { cmd: 'membershipHistory.findAllByMembershipId' },
       { userId, ...paginationDto },
+    );
+  }
+
+  @Get('list')
+  listMemberships(@Query() queryDto: ListMembershipsQueryDto) {
+    return this.membershipClient.send(
+      { cmd: 'membership.listMemberships' },
+      queryDto,
+    );
+  }
+
+  @Patch('welcome-kit/:membershipId')
+  updateWelcomeKitStatus(
+    @Param('membershipId') membershipId: string,
+    @Body() updateDto: UpdateWelcomeKitStatusDto,
+  ) {
+    return this.membershipClient.send(
+      { cmd: 'membership.updateWelcomeKitStatus' },
+      {
+        membershipId: parseInt(membershipId),
+        welcomeKitDelivered: updateDto.welcomeKitDelivered,
+      },
     );
   }
 }
