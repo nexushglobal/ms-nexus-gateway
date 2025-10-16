@@ -5,6 +5,7 @@ import { APP_SERVICE, AUTH_SERVICE } from 'src/config/services';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ComplaintsController } from './controllers/complaints-book.controller';
+import { EventsController } from './controllers/events.controller';
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ import { ComplaintsController } from './controllers/complaints-book.controller';
       },
     ]),
   ],
-  controllers: [AppController, ComplaintsController],
+  controllers: [AppController, ComplaintsController, EventsController],
   providers: [AppService],
 })
 export class AppDashboardModule {}

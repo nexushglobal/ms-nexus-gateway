@@ -18,14 +18,15 @@ import {
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Roles } from '../../common/decorators/roles.decorator';
-import { PaginationDto } from '../../common/dto/pagination.dto';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { RolesGuard } from '../../common/guards/roles.guard';
-import { APP_SERVICE } from '../../config/services';
+import { UserId } from 'src/common/decorators/current-user.decorator';
+import { Roles } from 'src/common/decorators/roles.decorator';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/common/guards/roles.guard';
+import { APP_SERVICE } from 'src/config/services';
 import { CreateEventDto } from '../dto/create-event.dto';
-import { UpdateEventDto } from '../dto/update-event.dto';
 import { UpdateEventStatusDto } from '../dto/update-event-status.dto';
+import { UpdateEventDto } from '../dto/update-event.dto';
 import { SerializedFile } from '../interfaces/serialized-file.interface';
 
 @Controller('events')
@@ -37,7 +38,6 @@ export class EventsController {
   ) {}
 
   // ADMIN ENDPOINTS
-
   @Post()
   @Roles('SYS', 'FAC')
   @UseInterceptors(FileInterceptor('eventImage'))
@@ -143,16 +143,18 @@ export class EventsController {
   }
 
   // CLIENT ENDPOINTS
-
   @Get('available/list')
   @Roles('CLI')
-  findAvailableEvents() {
-    return this.appClient.send('event.findAvailableEvents', {});
+  findAvailableEvents(@UserId() userId: string) {
+    return this.appClient.send('event.findAvailableEvents', { userId });
   }
 
   @Get('available/:id')
   @Roles('CLI')
-  findAvailableEventById(@Param('id', ParseIntPipe) id: number) {
-    return this.appClient.send('event.findAvailableEventById', { id });
+  findAvailableEventById(
+    @Param('id', ParseIntPipe) id: number,
+    @UserId() userId: string,
+  ) {
+    return this.appClient.send('event.findAvailableEventById', { id, userId });
   }
 }
