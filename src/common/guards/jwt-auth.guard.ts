@@ -110,6 +110,12 @@ export class JwtAuthGuard implements CanActivate {
               lastName: result.personalInfo.lastName,
             }
           : undefined,
+        billingInfo: result.billingInfo
+          ? {
+              ruc: result.billingInfo.ruc,
+              razonSocial: result.billingInfo.razonSocial,
+            }
+          : undefined,
       };
     } catch (error) {
       this.logger.error('Error obteniendo información del usuario:', error);
