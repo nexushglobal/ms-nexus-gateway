@@ -35,6 +35,8 @@ import { UsersController } from './users/users.controller';
 import { WebhookModule } from './webhook/webhook.module';
 import { ReportsModule } from './reports/reports.module';
 import { TestApiModule } from './test-api/test-api.module';
+import { EventsModule } from './events/events.module';
+import { TicketsModule } from './tickets/tickets.module';
 
 @Module({
   imports: [
@@ -113,6 +115,10 @@ import { TestApiModule } from './test-api/test-api.module';
     AppDashboardModule,
 
     TestApiModule,
+
+    EventsModule,
+
+    TicketsModule,
   ],
   controllers: [
     MenuController,
