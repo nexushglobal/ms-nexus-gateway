@@ -7,11 +7,14 @@ import {
   ParseIntPipe,
   Post,
   Query,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import {
   UserId,
   UserEmail,
@@ -37,25 +40,44 @@ export class TicketsController {
 
   @Post('purchase')
   @Roles('CLI')
+  @UseInterceptors(FilesInterceptor('paymentImages', 5))
   @UsePipes(new ValidationPipe({ transform: true }))
   purchaseTicket(
     @UserId() userId: string,
     @UserEmail() userEmail: string,
     @UserName() userName: string,
     @Body() purchaseTicketDto: PurchaseTicketDto,
+    @UploadedFiles() files: Array<Express.Multer.File> = [],
   ) {
+    const serializedFiles = files.map((file) => ({
+      originalname: file.originalname,
+      mimetype: file.mimetype,
+      buffer: file.buffer.toString('base64'),
+      size: file.size,
+    }));
+
     return this.appClient.send('ticket.purchase', {
-      ...purchaseTicketDto,
-      userId,
-      userName: userName || 'Usuario',
-      userEmail: userEmail || '',
+      purchaseTicketDto: {
+        ...purchaseTicketDto,
+        userId,
+        userName: userName || 'Usuario',
+        userEmail: userEmail || '',
+      },
+      files: serializedFiles,
     });
   }
 
   @Get('my-tickets')
   @Roles('CLI')
-  findMyTickets(@UserId() userId: string) {
-    return this.appClient.send('ticket.findUserTickets', { userId });
+  @UsePipes(new ValidationPipe({ transform: true }))
+  findMyTickets(
+    @UserId() userId: string,
+    @Query() paginationDto: PaginationDto,
+  ) {
+    return this.appClient.send('ticket.findUserTickets', {
+      userId,
+      paginationDto,
+    });
   }
 
   @Get('my-tickets/:id')
