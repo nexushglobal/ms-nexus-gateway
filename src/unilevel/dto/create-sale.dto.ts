@@ -14,6 +14,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { SaleType } from '../enums/sale-type.enum';
+import { CombinedInstallmentDto } from './combined-installment.dto';
 import { CreateDetailPaymentDto } from './create-detail-payment.dto';
 import { CreateFinancingInstallmentsDto } from './create-financing-installments.dto';
 
@@ -64,6 +65,7 @@ export class CreateSaleDto {
   totalAmount: number;
 
   // HU
+  @IsOptional()
   @IsNumber(
     {},
     {
@@ -71,13 +73,11 @@ export class CreateSaleDto {
         'El monto total de la habilitación urbana debe ser un número válido',
     },
   )
-  @IsNotEmpty({
-    message: 'El monto total de la habilitación urbana es requerida',
-  })
   @Min(0, {
     message: 'El monto total de la habilitación urbana no puede ser negativo',
   })
-  totalAmountUrbanDevelopment: number;
+  @Type(() => Number)
+  totalAmountUrbanDevelopment?: number;
 
   @IsDateString(
     {},
@@ -141,14 +141,19 @@ export class CreateSaleDto {
   financingInstallments?: CreateFinancingInstallmentsDto[];
 
   @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CombinedInstallmentDto)
+  combinedInstallments?: CombinedInstallmentDto[];
+
+  @IsOptional()
   @IsNumber({}, { message: 'El monto de reserva debe ser un número válido' })
   @Type(() => Number)
   reservationAmount?: number;
 
   @IsOptional()
   @IsInt({
-    message:
-      'El número de cuotas de la habilitación urbana debe ser un número entero',
+    message: 'El período máximo de reserva debe ser un número entero',
   })
   @Min(1)
   @Type(() => Number)
@@ -158,10 +163,19 @@ export class CreateSaleDto {
   @Type(() => Boolean)
   isReservation?: boolean = false;
 
-  @IsString({
-    message: 'El nombre del proyecto debe ser una cadena de caracteres',
-  })
-  @IsNotEmpty({ message: 'El nombre del proyecto es requerido' })
-  @Transform(({ value }) => value?.toString().toUpperCase())
-  projectName: string;
+  @IsOptional()
+  @IsString({ message: 'Las notas deben ser una cadena de caracteres' })
+  notes?: string;
+
+  @IsOptional()
+  @IsBoolean({ message: 'El cargo por mora debe ser un valor booleano' })
+  @Type(() => Boolean)
+  applyLateFee?: boolean;
+
+  // @IsString({
+  //   message: 'El nombre del proyecto debe ser una cadena de caracteres',
+  // })
+  // @IsNotEmpty({ message: 'El nombre del proyecto es requerido' })
+  // @Transform(({ value }) => value?.toString().toUpperCase())
+  // projectName: string;
 }
