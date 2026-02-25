@@ -12,7 +12,7 @@ export class PaymentApprovedNotificationDto {
   saleId: string;
 
   @IsString({ message: 'El nuevo estado de la venta es requerido' })
-  newStatus: string;
+  saleStatus: string;
 
   @IsIn(['APPROVED', 'REJECTED'], {
     message: 'La acción debe ser APPROVED o REJECTED',
