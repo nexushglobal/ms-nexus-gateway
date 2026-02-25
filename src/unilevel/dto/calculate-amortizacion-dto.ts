@@ -1,13 +1,15 @@
-// src/admin-sales/financing/dto/calculate-amortization.dto.ts
 import {
+  IsArray,
   IsBoolean,
   IsDateString,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   Min,
+  ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import { InterestRateSectionDto } from './interest-rate-section.dto';
 
 export class CalculateAmortizationDto {
   @IsNotEmpty({ message: 'El monto total de financiación es requerido' })
@@ -31,17 +33,13 @@ export class CalculateAmortizationDto {
   @Type(() => Number)
   reservationAmount?: number = 0;
 
-  @IsNotEmpty({ message: 'El porcentaje de interés es requerido' })
-  @IsNumber({}, { message: 'El porcentaje de interés debe ser un número' })
-  @Type(() => Number)
-  @Min(0, { message: 'El porcentaje de interés debe ser mayor o igual a 0' })
-  interestRate: number;
-
-  @IsNotEmpty({ message: 'La cantidad de cuotas es requerido' })
-  @IsNumber({}, { message: 'La cantidad de cuotas debe ser un número' })
-  @Type(() => Number)
-  @Min(1, { message: 'La cantidad de cuotas debe ser mayor a 1' })
-  numberOfPayments: number;
+  @IsNotEmpty({
+    message: 'Los tramos de tasa de interés son requeridos',
+  })
+  @IsArray({ message: 'Los tramos de tasa de interés deben ser un arreglo' })
+  @ValidateNested({ each: true })
+  @Type(() => InterestRateSectionDto)
+  interestRateSections: InterestRateSectionDto[];
 
   @IsNotEmpty({ message: 'La fecha de pago inicial es requerido' })
   @IsDateString({}, { message: 'La fecha de pago inicial debe ser válida' })
@@ -50,4 +48,20 @@ export class CalculateAmortizationDto {
   @IsBoolean()
   @IsOptional()
   includeDecimals?: boolean;
+
+  // Parámetros para HU (Habilitación Urbana) - Opcionales
+  @IsOptional()
+  @IsNumber({}, { message: 'El monto total de HU debe ser un número' })
+  @Type(() => Number)
+  totalAmountHu?: number;
+
+  @IsOptional()
+  @IsNumber({}, { message: 'La cantidad de cuotas de HU debe ser un número' })
+  @Type(() => Number)
+  @Min(1, { message: 'La cantidad de cuotas de HU debe ser mayor a 1' })
+  numberOfPaymentsHu?: number;
+
+  @IsOptional()
+  @IsDateString({}, { message: 'La fecha de pago inicial de HU debe ser válida' })
+  firstPaymentDateHu?: string;
 }
