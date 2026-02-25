@@ -15,9 +15,9 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { SaleType } from '../enums/sale-type.enum';
+import { CombinedInstallmentDto } from './combined-installment.dto';
 import { CreateDetailPaymentDto } from './create-detail-payment.dto';
 import { InterestRateSectionDto } from './interest-rate-section.dto';
-import { CombinedInstallmentDto } from './combined-installment.dto';
 
 export class CreateSaleDto {
   @IsUUID('4', {
